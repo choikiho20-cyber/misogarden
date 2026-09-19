@@ -1,0 +1,9 @@
+# 내부 자료 — 공개 저장소에 올리지 않는다
+_salvage/
+build.py
+rooms-data.js
+.claude/
+__pycache__/
+*.pyc
+Thumbs.db
+.DS_Store

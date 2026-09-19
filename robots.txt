@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+# 시안 공개 단계 — 검색 색인 차단. 오픈 시 build.py의 DRAFT=False
