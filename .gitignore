@@ -3,6 +3,7 @@ _salvage/
 build.py
 rooms-data.js
 .claude/
+인수인계.md
 __pycache__/
 *.pyc
 Thumbs.db
