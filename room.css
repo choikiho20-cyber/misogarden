@@ -77,6 +77,9 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px
   border-left:15px solid var(--gold);border-top:9px solid transparent;border-bottom:9px solid transparent}
 .vslot .vt{font-family:var(--serif);font-size:1.02rem}
 .vslot .vd{font-size:.78rem;color:var(--paper-dim);max-width:34ch}
+.vembed{position:relative;aspect-ratio:16/9;width:100%;border-radius:4px;overflow:hidden;
+  background:var(--ink2);border:1px solid var(--line);margin-top:34px}
+.vembed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
 .bookbox{border:1px solid var(--line);border-top:2px solid var(--gold);
   background:var(--ink2);padding:26px 24px;border-radius:2px;position:sticky;top:calc(var(--mock) + 84px)}
