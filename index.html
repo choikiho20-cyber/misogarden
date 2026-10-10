@@ -963,7 +963,7 @@ function open(photos,html){
   modal.classList.add('open');document.body.style.overflow='hidden';
   paint();document.getElementById('mclose').focus();
 }
-function close(){modal.classList.remove('open');document.body.style.overflow='';if(lastFocus)lastFocus.focus()}
+function close(){modal.classList.remove('open');mbody.innerHTML='';document.body.style.overflow='';if(lastFocus)lastFocus.focus()}
 const step=d=>{gi=(gi+d+gal.length)%gal.length;paint()};
 
 document.getElementById('mclose').onclick=close;
@@ -984,6 +984,10 @@ stage.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(
 const vslotHTML=(t,d)=>`<div class="vslot mvid" style="aspect-ratio:21/9">
   <div class="tag">영상 자리</div><div class="play"></div>
   <div class="vt">${esc(t)}</div><div class="vd">${esc(d)}</div></div>`;
+const ytHTML=y=>`<div class="vembed mvid"><iframe src="https://www.youtube-nocookie.com/embed/${esc(y.id)}?rel=0&amp;playsinline=1"
+  title="${esc(y.title)}" referrerpolicy="strict-origin-when-cross-origin"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen></iframe></div>`;
 
 document.addEventListener('click',e=>{
   const rb=e.target.closest('[data-room]');
@@ -1002,7 +1006,7 @@ document.addEventListener('click',e=>{
       </div>
       ${r.feat.length?`<div class="chips">${r.feat.map(f=>`<span class="chip gold">${esc(f)}</span>`).join('')}</div>`:''}
       <div class="chips">${r.am.map(a=>`<span class="chip">${esc(a)}</span>`).join('')}</div>
-      ${vslotHTML(r.n+' 객실 영상',r.sp>=30?'대표 객실 — 내부 워킹샷 실촬영 + 나레이션.':'객실 QR에 연결되는 사진 슬라이드 영상.')}
+      ${r.yt?ytHTML(r.yt):vslotHTML(r.n+' 객실 영상',r.sp>=30?'대표 객실 — 내부 워킹샷 실촬영 + 나레이션.':'객실 QR에 연결되는 사진 슬라이드 영상.')}
       <div class="btns" style="justify-content:flex-start;margin-top:0">
         <a class="btn fill" href="${BOOK}" target="_blank" rel="noopener">실시간 예약하기</a>
         <a class="btn" href="tel:043-653-2885">전화 문의</a>
