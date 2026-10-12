@@ -146,7 +146,6 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px
   font-size:.64rem;font-weight:800;letter-spacing:.16em;padding:5px 12px}
 .vslot .vt{font-family:var(--serif);font-size:1.02rem;color:var(--paper)}
 .vslot .vd{font-size:.78rem;color:var(--paper-dim);max-width:34ch}
-.vslot.tall{aspect-ratio:4/5}
 .vembed{position:relative;aspect-ratio:16/9;width:100%;border-radius:4px;overflow:hidden;background:var(--ink2);border:1px solid var(--line)}
 .vembed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
@@ -916,10 +915,7 @@ document.getElementById('rgrid').innerHTML=ROOMS.map(r=>`
       <p>기준 ${r.std}명 · 최대 ${r.max}명</p>
       <p style="color:var(--gold);font-weight:600;margin-top:8px">${won(r.price)?won(r.price)+'<span style="color:var(--paper-dim);font-weight:400"> / 1박~</span>':'<span style="color:var(--paper-dim);font-weight:400">날짜별 요금 확인</span>'}</p>
     </div>
-  </a>`).join('')+`
-  <div class="vslot tall rv"><div class="tag">영상 자리 ③</div><div class="play"></div>
-    <div class="vt">객실별 영상 13편</div>
-    <div class="vd">각 객실 QR에 연결되는 짧은 소개 영상. 대표 객실 5실은 실촬영, 나머지는 사진 슬라이드.</div></div>`;
+  </a>`).join('');
 
 document.getElementById('cstrip').innerHTML=CAMP.map((c,i)=>`
   <button class="rv" data-camp="${i}"><img src="${c[0]}" alt="${esc(c[1])}" loading="lazy">
