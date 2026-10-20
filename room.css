@@ -6,9 +6,8 @@
   --line:rgba(244,241,234,.14);
   --sans:'Pretendard Variable',Pretendard,-apple-system,system-ui,sans-serif;
   --serif:'Noto Serif KR',serif;
-  --gut:24px; --max:1160px; --mock:36px;
+  --gut:24px; --max:1160px; --mock:0px;
 }
-@media(max-width:700px){:root{--mock:54px}}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--ink);color:var(--paper);font-family:var(--sans);
   font-weight:350;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -17,9 +16,6 @@ a{color:inherit;text-decoration:none}
 h2{font-family:var(--serif);font-weight:500;font-size:1.05rem;letter-spacing:.02em;margin:30px 0 14px}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gut)}
 
-.mock{background:var(--gold);color:var(--ink);text-align:center;padding:9px 16px;
-  font-size:.75rem;font-weight:700;line-height:1.5;
-  position:fixed;top:0;left:0;right:0;z-index:101;height:var(--mock)}
 nav{position:fixed;top:var(--mock);left:0;right:0;z-index:100;padding:12px 0;
   background:rgba(12,16,14,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
@@ -65,18 +61,6 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px
 .chips.gold{margin-top:18px}
 .chips.gold span{border-color:var(--gold-dim);color:var(--gold);font-weight:600}
 
-.vslot{position:relative;border:1.5px dashed var(--gold-dim);border-radius:4px;
-  background:var(--ink2);display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:12px;text-align:center;padding:40px 22px;
-  overflow:hidden;margin-top:34px;aspect-ratio:16/9}
-.vslot .tag{position:absolute;top:0;left:0;background:var(--gold);color:var(--ink);
-  font-size:.64rem;font-weight:800;letter-spacing:.16em;padding:5px 12px}
-.vslot .play{width:58px;height:58px;border-radius:50%;border:1.5px solid var(--gold);
-  display:grid;place-items:center;flex:none}
-.vslot .play::after{content:'';width:0;height:0;margin-left:4px;
-  border-left:15px solid var(--gold);border-top:9px solid transparent;border-bottom:9px solid transparent}
-.vslot .vt{font-family:var(--serif);font-size:1.02rem}
-.vslot .vd{font-size:.78rem;color:var(--paper-dim);max-width:34ch}
 .vembed{position:relative;aspect-ratio:16/9;width:100%;border-radius:4px;overflow:hidden;
   background:var(--ink2);border:1px solid var(--line);margin-top:34px}
 .vembed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
