@@ -20,8 +20,8 @@ nav{position:fixed;top:var(--mock);left:0;right:0;z-index:100;padding:12px 0;
   background:rgba(12,16,14,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{font-family:var(--serif);font-size:1.12rem;letter-spacing:.06em;font-weight:500}
-.brand small{display:block;font-family:var(--sans);font-size:.58rem;
-  letter-spacing:.3em;color:var(--gold);font-weight:600;margin-top:2px}
+.brand small{display:block;font-family:var(--sans);font-size:.68rem;
+  letter-spacing:.14em;color:var(--gold);font-weight:600;margin-top:2px}
 .navcall{border:1px solid var(--gold);color:var(--gold);padding:9px 18px;
   border-radius:100px;font-size:.84rem;font-weight:600;white-space:nowrap}
 .navcall:hover{background:var(--gold);color:var(--ink)}
