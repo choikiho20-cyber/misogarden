@@ -947,10 +947,15 @@ function open(photos,html){
   thumbs.style.display=photos.length>1?'flex':'none';
   document.getElementById('mprev').style.display=document.getElementById('mnext').style.display=photos.length>1?'':'none';
   mbody.innerHTML=html;
+  // 창을 열 때 기록 한 칸을 남겨, 폰·브라우저 뒤로가기가 사이트를 나가지 않고 창만 닫게 한다
+  if(!modal.classList.contains('open'))history.pushState({modal:1},'');
   modal.classList.add('open');document.body.style.overflow='hidden';
   paint();document.getElementById('mclose').focus();
 }
-function close(){modal.classList.remove('open');mbody.innerHTML='';document.body.style.overflow='';if(lastFocus)lastFocus.focus()}
+function hide(){modal.classList.remove('open');mbody.innerHTML='';document.body.style.overflow='';if(lastFocus)lastFocus.focus()}
+function close(){if(history.state&&history.state.modal)history.back();else hide()}
+addEventListener('popstate',()=>{if(modal.classList.contains('open'))hide()});
+if(history.state&&history.state.modal)history.replaceState(null,'');
 const step=d=>{gi=(gi+d+gal.length)%gal.length;paint()};
 
 document.getElementById('mclose').onclick=close;
