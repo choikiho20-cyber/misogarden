@@ -87,7 +87,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 h2{font-family:var(--serif);font-weight:300;line-height:1.35;letter-spacing:-.02em;
   font-size:clamp(1.7rem,4.2vw,2.9rem)}
 h3{font-family:var(--serif);font-weight:500;font-size:1.15rem;letter-spacing:-.01em}
-.lead{color:var(--paper-dim);font-size:clamp(.95rem,1.6vw,1.06rem);max-width:60ch}
+.lead{color:var(--paper-dim);font-size:clamp(.95rem,1.6vw,1.06rem);max-width:60ch;word-break:keep-all}
 section{padding:clamp(72px,11vw,140px) 0}
 
 /* ── mockup banner + scroll progress ── */
@@ -478,10 +478,10 @@ footer .brand{margin-bottom:14px}
 <!-- ══ FACILITIES ══ -->
 <section id="facility">
   <div class="wrap">
-    <div class="rv" style="max-width:660px">
+    <div class="rv">
       <div class="eyebrow">Facilities</div>
       <h2>한 번 들어오면<br>나갈 일이 없습니다</h2>
-      <p class="lead" style="margin-top:22px">미소가든펜션캠핑장이 다른 펜션과 갈리는 지점입니다. 놀 것과 먹을 것이 전부 단지 안에 있습니다.</p>
+      <p class="lead" style="margin-top:22px;max-width:none">미소가든펜션캠핑장이 다른 펜션과 갈리는 지점입니다. 놀 것과 먹을 것이 전부 단지 안에 있습니다.</p>
     </div>
     <div class="fgrid" id="fgrid"></div>
   </div>
@@ -490,12 +490,11 @@ footer .brand{margin-bottom:14px}
 <!-- ══ ROOMS ══ -->
 <section id="rooms" class="rooms">
   <div class="wrap">
-    <div class="rv" style="max-width:660px">
+    <div class="rv">
       <div class="eyebrow">Rooms</div>
       <h2>본관 원룸부터<br>마당 딸린 독채까지</h2>
-      <p class="lead" style="margin-top:22px">
-        객실을 누르시면 사진이 크게 열립니다. 모든 객실에 QR을 붙여, 도착 전에 방 안을
-        영상으로 미리 보실 수 있습니다.
+      <p class="lead" style="margin-top:22px;max-width:none">
+        객실을 누르시면 사진과 객실 설명이, 「▶ 영상 보기」를 누르시면 객실 영상이 바로 열립니다.
       </p>
     </div>
     <div class="rgrid" id="rgrid"></div>
