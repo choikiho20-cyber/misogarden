@@ -245,7 +245,9 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px
 
 /* ── strip ── */
 .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
-@media(max-width:760px){.strip{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.strip{grid-template-columns:1fr 1fr}
+  .strip button:first-child:nth-last-child(odd){grid-column:1/-1}}
+.strip .qr.play{top:10px;bottom:auto;right:10px;font-size:.72rem;padding:6px 12px}
 .strip button{aspect-ratio:3/2;position:relative;overflow:hidden;border-radius:3px}
 .strip img{transition:transform .6s}
 .strip button:hover img{transform:scale(1.06)}
@@ -879,12 +881,10 @@ const won=n=>n?n.toLocaleString('ko-KR')+'원':null;
 const kindOf=r=>r.feat.includes('독채')?'독채':(r.ty==='거실+객실'?'거실+객실':'원룸형');
 
 const CAMP=[
- ['img/tipi.jpg','이지캠핑장 — 장비 제공',['img/caravan.jpg']],
- ['img/caravan.jpg','카라반',[]],
- ['img/pyeongsang2.jpg','느티나무 아래 평상',['img/pyeongsang.jpg']],
- ['img/campfire.jpg','캠프파이어',[]],
- ['img/lawn.jpg','일반 야영장',['img/field.jpg']],
- ['img/deck-tunnel.jpg','가로수길 데크',['img/tunnel-deck.jpg']]
+ ['img/easycamp.jpg','이지캠핑장 — 장비 제공',['img/easycamp-in.jpg','img/tipi.jpg'],
+  {id:'N50XAvqf9cg',title:'미소가든펜션캠핑장 : 텐트 설치 없이 즐기는 제천 캠핑｜미소가든 이지캠핑 둘러보기'}],
+ ['img/lawn.jpg','잔디존 — 일반 야영장',['img/field.jpg']],
+ ['img/hero-tunnel.jpg','가로수길 산책로',['img/deck-tunnel.jpg','img/tunnel-deck.jpg']]
 ];
 
 /* ────────── 렌더 ────────── */
@@ -911,7 +911,7 @@ document.getElementById('rgrid').innerHTML=ROOMS.map(r=>`
 
 document.getElementById('cstrip').innerHTML=CAMP.map((c,i)=>`
   <button class="rv" data-camp="${i}"><img src="${c[0]}" alt="${esc(c[1])}" loading="lazy">
-    <div class="cap">${esc(c[1])}</div></button>`).join('');
+    <div class="cap">${esc(c[1])}</div>${vbadge(c[3])}</button>`).join('');
 
 /* ────────── 히어로 슬라이드 ────────── */
 const slides=[...document.querySelectorAll('.hero .slide')];
@@ -1020,7 +1020,8 @@ document.addEventListener('click',e=>{
   const cb=e.target.closest('[data-camp]');
   if(cb){
     const c=CAMP[+cb.dataset.camp];
-    open([c[0],...c[2]],`<div class="kind">캠핑 · 야영</div><h3>${esc(c[1])}</h3>`);
+    open([c[0],...c[2]],`<div class="kind">캠핑 · 야영</div><h3>${esc(c[1])}</h3>${c[3]?ytHTML(c[3],jump):''}`);
+    if(jump)toVideo();
   }
 });
 
