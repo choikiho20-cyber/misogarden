@@ -251,7 +251,7 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px
 .strip button{aspect-ratio:3/2;position:relative;overflow:hidden;border-radius:3px}
 .strip img{transition:transform .6s}
 .strip button:hover img{transform:scale(1.06)}
-.strip .cap{position:absolute;left:0;right:0;bottom:0;padding:26px 14px 12px;
+.strip .cap{position:absolute;left:0;right:0;bottom:0;padding:26px 14px 12px;word-break:keep-all;
   background:linear-gradient(transparent,rgba(12,16,14,.92));font-size:.84rem;
   font-family:var(--serif);text-align:left}
 
@@ -880,7 +880,8 @@ const kindOf=r=>r.feat.includes('독채')?'독채':(r.ty==='거실+객실'?'거�
 const CAMP=[
  ['img/easycamp.jpg','이지캠핑장 — 장비 제공',['img/easycamp-in.jpg'],
   {id:'N50XAvqf9cg',title:'미소가든펜션캠핑장 : 텐트 설치 없이 즐기는 제천 캠핑｜미소가든 이지캠핑 둘러보기'}],
- ['img/lawn.jpg','잔디존 — 일반 캠핑장',['img/field.jpg']],
+ ['img/valleycamp.jpg','일반 캠핑장 — 계곡존⁠·⁠잔디존',['img/valleycamp-sink.jpg','img/lawn.jpg','img/field.jpg'],
+  {id:'dy1U_8ga9s0',title:'미소가든펜션캠핑장 : 푸른 나무 그늘과 맑은 계곡이 있는 곳, 제천 미소가든캠핑장 계곡존 둘러보기'}],
  ['img/hero-tunnel.jpg','가로수길 산책로',['img/deck-tunnel.jpg','img/tunnel-deck.jpg']]
 ];
 
