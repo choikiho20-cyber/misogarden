@@ -265,6 +265,9 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px
   background:linear-gradient(transparent,rgba(12,16,14,.94))}
 .season .t b{font-family:var(--serif);font-weight:500;font-size:1.05rem;display:block}
 .season .t span{font-size:.76rem;color:var(--paper-dim)}
+.season{cursor:pointer}
+.season .cnt{position:absolute;right:10px;top:10px;background:rgba(12,16,14,.84);
+  border:1px solid var(--line);font-size:.66rem;padding:4px 9px;color:var(--paper-dim);backdrop-filter:blur(4px)}
 
 /* ── guide ── */
 .gcards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
@@ -652,12 +655,11 @@ footer .brand{margin-bottom:14px}
       <h2>계절마다<br>다른 곳이 됩니다</h2>
     </div>
     <div class="seasons">
-      <div class="season rv"><img src="img/lawn.jpg" alt="봄"><div class="t"><b>봄</b><span>잔디밭과 철쭉, 캠핑장 개장</span></div></div>
-      <div class="season rv"><img src="img/valley2.jpg" alt="여름"><div class="t"><b>여름</b><span>수영장 · 계곡 · 평상</span></div></div>
-      <div class="season rv"><img src="img/tunnel-fall.jpg" alt="가을"><div class="t"><b>가을</b><span>가로수길 단풍</span></div></div>
-      <div class="season rv"><img src="img/night2.jpg" alt="겨울"><div class="t"><b>겨울</b><span>온돌 객실과 캠프파이어</span></div></div>
+      <div class="season rv" data-season="0" role="button" tabindex="0"><img src="img/spring-lawn.jpg" alt="봄 — 철쭉 핀 잔디밭"><div class="t"><b>봄</b><span>잔디밭과 철쭉, 캠핑장 개장</span></div></div>
+      <div class="season rv" data-season="1" role="button" tabindex="0"><img src="img/valley2.jpg" alt="여름 — 단지 앞 계곡"><div class="t"><b>여름</b><span>수영장 · 계곡 · 평상</span></div></div>
+      <div class="season rv" data-season="2" role="button" tabindex="0"><img src="img/tunnel-fall.jpg" alt="가을 — 가로수길 단풍"><div class="t"><b>가을</b><span>가로수길 단풍</span></div></div>
+      <div class="season rv" data-season="3" role="button" tabindex="0"><img src="img/room01.jpg" alt="겨울 — 따뜻한 온돌 객실"><div class="t"><b>겨울</b><span>따뜻한 온돌 객실</span></div></div>
     </div>
-    <div class="note rv">겨울 사진은 아직 없습니다. 설경 촬영은 성수기 전 사전 촬영 항목으로 잡아두었습니다.</div>
   </div>
 </section>
 
@@ -912,6 +914,18 @@ const CAMP=[
  ['img/hero-tunnel.jpg','가로수길 산책로',['img/deck-tunnel.jpg','img/tunnel-deck.jpg']]
 ];
 
+// 계절 카드 — 누르면 그 계절 사진을 넘겨 본다 (겨울 눈 사진이 생기면 [3] 맨 앞에 넣기)
+const SEASONS=[
+ ['봄','잔디밭과 철쭉, 캠핑장 개장',['img/spring-lawn.jpg','img/spring-lawn2.jpg','img/deck-tunnel.jpg','img/tunnel-walk.jpg']],
+ ['여름','수영장 · 계곡 · 평상',['img/valley2.jpg','img/valley.jpg','img/hero-pool.jpg','img/pool-cover.jpg','img/valleycamp.jpg','img/village4.jpg']],
+ ['가을','가로수길 단풍',['img/tunnel-fall.jpg','img/lawn.jpg','img/pool-outdoor.jpg']],
+ ['겨울','따뜻한 온돌 객실',['img/room01.jpg','img/hero-night-house.jpg']]
+];
+document.querySelectorAll('[data-season]').forEach(el=>{
+  el.insertAdjacentHTML('beforeend',`<div class="cnt">사진 ${SEASONS[+el.dataset.season][2].length}</div>`);
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});
+});
+
 /* ────────── 렌더 ────────── */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const vbadge=y=>y?`<span class="qr play" data-play>▶ 영상<span class="vlab"> 보기</span></span>`:'';
@@ -1056,6 +1070,12 @@ document.addEventListener('click',e=>{
     const c=CAMP[+cb.dataset.camp];
     open([c[0],...c[2]],`<div class="kind">캠핑 · 야영</div><h3>${esc(c[1])}</h3>${c[3]?ytHTML(c[3],jump):''}`);
     if(jump)toVideo();
+    return;
+  }
+  const sb=e.target.closest('[data-season]');
+  if(sb){
+    const s=SEASONS[+sb.dataset.season];
+    open(s[2],`<div class="kind">사계절</div><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p>`);
   }
 });
 
