@@ -658,7 +658,7 @@ footer .brand{margin-bottom:14px}
       <div class="season rv" data-season="0" role="button" tabindex="0"><img src="img/spring-lawn.jpg" alt="봄 — 철쭉 핀 잔디밭"><div class="t"><b>봄</b><span>잔디밭과 철쭉, 캠핑장 개장</span></div></div>
       <div class="season rv" data-season="1" role="button" tabindex="0"><img src="img/valley2.jpg" alt="여름 — 단지 앞 계곡"><div class="t"><b>여름</b><span>수영장 · 계곡 · 평상</span></div></div>
       <div class="season rv" data-season="2" role="button" tabindex="0"><img src="img/tunnel-fall.jpg" alt="가을 — 가로수길 단풍"><div class="t"><b>가을</b><span>가로수길 단풍</span></div></div>
-      <div class="season rv" data-season="3" role="button" tabindex="0"><img src="img/room01.jpg" alt="겨울 — 따뜻한 온돌 객실"><div class="t"><b>겨울</b><span>따뜻한 온돌 객실</span></div></div>
+      <div class="season rv" data-season="3" role="button" tabindex="0"><img src="img/winter-snow.jpg" alt="겨울 — 눈 내린 객실동"><div class="t"><b>겨울</b><span>눈 내린 객실동과 따뜻한 온돌</span></div></div>
     </div>
   </div>
 </section>
@@ -914,12 +914,12 @@ const CAMP=[
  ['img/hero-tunnel.jpg','가로수길 산책로',['img/deck-tunnel.jpg','img/tunnel-deck.jpg']]
 ];
 
-// 계절 카드 — 누르면 그 계절 사진을 넘겨 본다 (겨울 눈 사진이 생기면 [3] 맨 앞에 넣기)
+// 계절 카드 — 누르면 그 계절 사진을 넘겨 본다. 4번째 칸은 창 아래 작은 안내 (겨울 = 실제 사진에 눈을 입힌 그림 — 첫눈 실사 생기면 교체)
 const SEASONS=[
  ['봄','잔디밭과 철쭉, 캠핑장 개장',['img/spring-lawn.jpg','img/spring-lawn2.jpg','img/deck-tunnel.jpg','img/tunnel-walk.jpg']],
  ['여름','수영장 · 계곡 · 평상',['img/valley2.jpg','img/valley.jpg','img/hero-pool.jpg','img/pool-cover.jpg','img/valleycamp.jpg','img/village4.jpg']],
  ['가을','가로수길 단풍',['img/tunnel-fall.jpg','img/lawn.jpg','img/pool-outdoor.jpg']],
- ['겨울','따뜻한 온돌 객실',['img/room01.jpg','img/hero-night-house.jpg']]
+ ['겨울','눈 내린 객실동과 따뜻한 온돌',['img/winter-snow.jpg','img/hero-night-house.jpg'],'눈 내린 모습은 실제 객실동 사진에 눈을 입혀 표현했습니다.']
 ];
 document.querySelectorAll('[data-season]').forEach(el=>{
   el.insertAdjacentHTML('beforeend',`<div class="cnt">사진 ${SEASONS[+el.dataset.season][2].length}</div>`);
@@ -1075,7 +1075,7 @@ document.addEventListener('click',e=>{
   const sb=e.target.closest('[data-season]');
   if(sb){
     const s=SEASONS[+sb.dataset.season];
-    open(s[2],`<div class="kind">사계절</div><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p>`);
+    open(s[2],`<div class="kind">사계절</div><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p>${s[3]?`<p class="fnote">${esc(s[3])}</p>`:''}`);
   }
 });
 
