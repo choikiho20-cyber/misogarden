@@ -136,6 +136,11 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px
 /* ── video slot ── */
 .vembed{position:relative;aspect-ratio:16/9;width:100%;border-radius:4px;overflow:hidden;background:var(--ink2);border:1px solid var(--line)}
 .vembed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ytf{position:absolute;inset:0;display:block}
+.ytf::after{content:'';position:absolute;left:50%;top:50%;width:68px;height:48px;margin:-24px 0 0 -34px;border-radius:14px;
+  background:#e62117 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M8 5v14l11-7z'/%3E%3C/svg%3E") center/26px no-repeat;opacity:.92;transition:.2s}
+.ytf:hover::after{opacity:1;transform:scale(1.06)}
+.hero .slide picture{display:block;width:100%;height:100%}
 
 /* ── stats ── */
 .stats{background:var(--ink2);border-block:1px solid var(--line)}
@@ -435,11 +440,11 @@ footer .brand{margin-bottom:14px}
 
 <!-- ══ HERO ══ -->
 <header class="hero" id="hero">
-  <div class="slide on"><img src="img/hero-aerial-day.jpg" alt="미소가든펜션캠핑장 낮 항공 전경 — 주차장·이지캠핑·객실동"></div>
-  <div class="slide"><img src="img/hero-tunnel.jpg" alt="나무 터널 산책로"></div>
-  <div class="slide"><img src="img/hero-pool.jpg" alt="그늘막 아래 야외 수영장 두 곳"></div>
-  <div class="slide"><img src="img/hero-night-house.jpg" alt="조명이 켜진 저녁의 객실동"></div>
-  <div class="slide"><img src="img/hero-aerial-night.jpg" alt="미소 네온사인이 보이는 야간 항공 전경"></div>
+  <div class="slide on"><picture><source media="(max-width:760px)" srcset="img/hero-aerial-day-m.jpg"><img src="img/hero-aerial-day.jpg" alt="미소가든펜션캠핑장 낮 항공 전경 — 주차장·이지캠핑·객실동" fetchpriority="high"></picture></div>
+  <div class="slide"><picture><source media="(max-width:760px)" data-srcset="img/hero-tunnel-m.jpg"><img data-src="img/hero-tunnel.jpg" alt="나무 터널 산책로"></picture></div>
+  <div class="slide"><picture><source media="(max-width:760px)" data-srcset="img/hero-pool-m.jpg"><img data-src="img/hero-pool.jpg" alt="그늘막 아래 야외 수영장 두 곳"></picture></div>
+  <div class="slide"><picture><source media="(max-width:760px)" data-srcset="img/hero-night-house-m.jpg"><img data-src="img/hero-night-house.jpg" alt="조명이 켜진 저녁의 객실동"></picture></div>
+  <div class="slide"><picture><source media="(max-width:760px)" data-srcset="img/hero-aerial-night-m.jpg"><img data-src="img/hero-aerial-night.jpg" alt="미소 네온사인이 보이는 야간 항공 전경"></picture></div>
   <div class="wrap">
     <div class="loc">충북 제천</div>
     <h1>마을 하나를<br>통째로 빌립니다</h1>
@@ -477,13 +482,13 @@ footer .brand{margin-bottom:14px}
         나갈 일이 없습니다. 아이가 뛰어도 되고, 늦게까지 떠들어도 됩니다.
       </p>
     </div>
-    <div class="rv"><div class="figtall"><img src="img/frame-leaf.jpg" alt="독채 외관"></div></div>
+    <div class="rv"><div class="figtall"><img loading="lazy" src="img/frame-leaf.jpg" alt="독채 외관"></div></div>
   </div>
 </section>
 
 <!-- ══ DRONE ══ -->
 <section class="drone">
-  <div class="bg"><img src="img/aerial.jpg" alt="항공 전경"></div>
+  <div class="bg"><img loading="lazy" src="img/aerial.jpg" alt="항공 전경"></div>
   <div class="inner wrap">
     <div class="rv" style="text-align:center;max-width:780px;margin:0 auto 44px">
       <div class="eyebrow" style="margin-inline:auto">Aerial</div>
@@ -491,11 +496,7 @@ footer .brand{margin-bottom:14px}
       <p class="lead" style="margin:20px auto 0">1만 평은 글로 읽으면 감이 오지 않습니다. 한 번 위에서 보면 끝납니다.</p>
     </div>
     <div class="vembed rv" style="max-width:940px;margin:0 auto">
-      <iframe src="https://www.youtube-nocookie.com/embed/u5vV8JoQcWA?rel=0&amp;playsinline=1"
-        title="1만 평 규모의 쉼터, 제천 미소가든펜션캠핑장 한눈에 보기 — 드론 항공 영상"
-        loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen></iframe>
+      <a class="ytf" href="https://youtu.be/u5vV8JoQcWA" data-yt="u5vV8JoQcWA" data-title="1만 평 규모의 쉼터, 제천 미소가든펜션캠핑장 한눈에 보기 — 드론 항공 영상" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/u5vV8JoQcWA/hqdefault.jpg" alt="1만 평 규모의 쉼터, 제천 미소가든펜션캠핑장 한눈에 보기 — 드론 항공 영상" loading="lazy"></a>
     </div>
   </div>
 </section>
@@ -560,7 +561,7 @@ footer .brand{margin-bottom:14px}
 
 <!-- ══ GROUP ══ -->
 <section id="group" class="group">
-  <div class="bg"><img src="img/seminar-hall.jpg" alt="세미나실"></div>
+  <div class="bg"><img loading="lazy" src="img/seminar-hall.jpg" alt="세미나실"></div>
   <div class="inner wrap">
     <div class="rv" style="max-width:640px">
       <div class="eyebrow">Group &amp; Workshop</div>
@@ -573,10 +574,7 @@ footer .brand{margin-bottom:14px}
 
     <div class="rv" style="max-width:880px;margin-top:30px">
       <div class="vembed">
-        <iframe src="https://www.youtube-nocookie.com/embed/S355Smpxw9I?rel=0&amp;playsinline=1"
-          title="제천 단체 숙소 미소가든펜션캠핑장 — 단체 예약 안내 영상" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen></iframe>
+        <a class="ytf" href="https://youtu.be/S355Smpxw9I" data-yt="S355Smpxw9I" data-title="제천 단체 숙소 미소가든펜션캠핑장 — 단체 예약 안내 영상" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/S355Smpxw9I/hqdefault.jpg" alt="제천 단체 숙소 미소가든펜션캠핑장 — 단체 예약 안내 영상" loading="lazy"></a>
       </div>
       <p style="margin-top:14px;font-size:.92rem;color:var(--paper-dim);word-break:keep-all">
         <b style="color:var(--gold)">이런 단체 모십니다</b> — 스포츠 선수단·대회 관계자, 기업 연수, 대학 MT, 수련회, 동호회.
@@ -675,10 +673,10 @@ footer .brand{margin-bottom:14px}
       <h2>계절마다<br>다른 곳이 됩니다</h2>
     </div>
     <div class="seasons">
-      <div class="season rv" data-season="0" role="button" tabindex="0"><img src="img/spring-lawn.jpg" alt="봄 — 철쭉 핀 잔디밭"><div class="t"><b>봄</b><span>잔디밭과 철쭉, 캠핑장 개장</span></div></div>
-      <div class="season rv" data-season="1" role="button" tabindex="0"><img src="img/valley2.jpg" alt="여름 — 단지 앞 계곡"><div class="t"><b>여름</b><span>수영장 · 계곡 · 평상</span></div></div>
-      <div class="season rv" data-season="2" role="button" tabindex="0"><img src="img/tunnel-fall.jpg" alt="가을 — 가로수길 단풍"><div class="t"><b>가을</b><span>가로수길 단풍</span></div></div>
-      <div class="season rv" data-season="3" role="button" tabindex="0"><img src="img/winter-snow.jpg" alt="겨울 — 눈 내린 객실동"><div class="t"><b>겨울</b><span>눈 내린 객실동과 따뜻한 온돌</span></div></div>
+      <div class="season rv" data-season="0" role="button" tabindex="0"><img loading="lazy" src="img/spring-lawn.jpg" alt="봄 — 철쭉 핀 잔디밭"><div class="t"><b>봄</b><span>잔디밭과 철쭉, 캠핑장 개장</span></div></div>
+      <div class="season rv" data-season="1" role="button" tabindex="0"><img loading="lazy" src="img/valley2.jpg" alt="여름 — 단지 앞 계곡"><div class="t"><b>여름</b><span>수영장 · 계곡 · 평상</span></div></div>
+      <div class="season rv" data-season="2" role="button" tabindex="0"><img loading="lazy" src="img/tunnel-fall.jpg" alt="가을 — 가로수길 단풍"><div class="t"><b>가을</b><span>가로수길 단풍</span></div></div>
+      <div class="season rv" data-season="3" role="button" tabindex="0"><img loading="lazy" src="img/winter-snow.jpg" alt="겨울 — 눈 내린 객실동"><div class="t"><b>겨울</b><span>눈 내린 객실동과 따뜻한 온돌</span></div></div>
     </div>
   </div>
 </section>
@@ -755,11 +753,7 @@ footer .brand{margin-bottom:14px}
     <div class="abox">
       <div class="rv">
         <div class="vembed">
-          <iframe src="https://www.youtube-nocookie.com/embed/TbdTxcrZCZc?rel=0&amp;playsinline=1"
-            title="미소가든펜션캠핑장 주차 안내 — 입구·주차장 4곳·사무실 한눈에 보기"
-            loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen></iframe>
+          <a class="ytf" href="https://youtu.be/TbdTxcrZCZc" data-yt="TbdTxcrZCZc" data-title="미소가든펜션캠핑장 주차 안내 — 입구·주차장 4곳·사무실 한눈에 보기" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/TbdTxcrZCZc/hqdefault.jpg" alt="미소가든펜션캠핑장 주차 안내 — 입구·주차장 4곳·사무실 한눈에 보기" loading="lazy"></a>
         </div>
         <p style="margin-top:10px;font-size:.82rem;color:var(--paper-dim)">주차 안내 41초 — 펜션 입구 → 1~4주차장 → 사무실·편의점</p>
       </div>
@@ -871,6 +865,7 @@ footer .brand{margin-bottom:14px}
 
 <script src="rooms.js"></script>
 <script src="share.js" defer></script>
+<script src="yt.js" defer></script>
 <script>
 /* ────────── 데이터 ────────── */
 const BOOK='https://booking.ddnayo.com/booking-calendar?accommodationId=100751';
@@ -981,9 +976,15 @@ const dots=document.getElementById('dots');
 let si=0,timer;
 dots.innerHTML=slides.map((_,i)=>`<button aria-label="${i+1}번째 사진"${i?'':' aria-current="true"'}></button>`).join('');
 const dotBtns=[...dots.children];
+// 2~5번째 사진은 처음에 받지 않고, 다음 차례가 오기 전에 받는다 (휴대폰 첫 화면 무게)
+function need(i){slides[i].querySelectorAll('[data-src],[data-srcset]').forEach(n=>{
+  if(n.dataset.srcset){n.srcset=n.dataset.srcset;n.removeAttribute('data-srcset')}
+  if(n.dataset.src){n.src=n.dataset.src;n.removeAttribute('data-src')}})}
+addEventListener('load',()=>setTimeout(()=>need(1),1500));
 function go(i){
   slides[si].classList.remove('on');dotBtns[si].removeAttribute('aria-current');
   si=(i+slides.length)%slides.length;
+  need(si);need((si+1)%slides.length);
   slides[si].classList.add('on');dotBtns[si].setAttribute('aria-current','true');
   const im=slides[si].querySelector('img');im.style.animation='none';im.offsetHeight;im.style.animation='';
 }
@@ -1044,10 +1045,12 @@ let tx=0;
 stage.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
 stage.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>45)step(d<0?1:-1)},{passive:true});
 
-const ytHTML=(y,auto)=>`<div class="vembed mvid"><iframe src="https://www.youtube-nocookie.com/embed/${esc(y.id)}?rel=0&amp;playsinline=1${auto?'&amp;autoplay=1':''}"
+const ytHTML=(y,auto)=>auto?`<div class="vembed mvid"><iframe src="https://www.youtube-nocookie.com/embed/${esc(y.id)}?rel=0&amp;playsinline=1&amp;autoplay=1"
   title="${esc(y.title)}" referrerpolicy="strict-origin-when-cross-origin"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen></iframe></div>`;
+  allowfullscreen></iframe></div>`
+  :`<div class="vembed mvid"><a class="ytf" href="https://youtu.be/${esc(y.id)}" data-yt="${esc(y.id)}" data-title="${esc(y.title)}" target="_blank" rel="noopener">
+  <img src="https://i.ytimg.com/vi/${esc(y.id)}/hqdefault.jpg" alt="${esc(y.title)}" loading="lazy"></a></div>`;
 
 // 「▶ 영상 보기」로 열면 창 안의 영상으로 바로 내려가 재생 (폰은 자동재생이 막히면 재생 버튼만 보임)
 const toVideo=()=>{const v=mbody.querySelector('.vembed');if(v)v.scrollIntoView({block:'center'})};
