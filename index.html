@@ -266,6 +266,9 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px
 .season .t b{font-family:var(--serif);font-weight:500;font-size:1.05rem;display:block}
 .season .t span{font-size:.76rem;color:var(--paper-dim)}
 .season{cursor:pointer}
+.season .qr.play{top:10px;bottom:auto;left:10px;right:auto;font-size:.72rem;padding:6px 12px}
+.season .t span{word-break:keep-all}
+@media(max-width:520px){.season .qr.play .vlab{display:none}}
 .season .cnt{position:absolute;right:10px;top:10px;background:rgba(12,16,14,.84);
   border:1px solid var(--line);font-size:.66rem;padding:4px 9px;color:var(--paper-dim);backdrop-filter:blur(4px)}
 
@@ -919,16 +922,18 @@ const SEASONS=[
  ['봄','잔디밭과 철쭉, 캠핑장 개장',['img/spring-lawn.jpg','img/spring-lawn2.jpg','img/deck-tunnel.jpg','img/tunnel-walk.jpg']],
  ['여름','수영장 · 계곡 · 평상',['img/valley2.jpg','img/valley.jpg','img/hero-pool.jpg','img/pool-cover.jpg','img/valleycamp.jpg','img/village4.jpg']],
  ['가을','가로수길 단풍',['img/tunnel-fall.jpg','img/lawn.jpg','img/pool-outdoor.jpg']],
- ['겨울','눈 내린 객실동과 따뜻한 온돌',['img/winter-snow.jpg','img/hero-night-house.jpg'],'눈 내린 모습은 실제 객실동 사진에 눈을 입혀 표현했습니다.']
+ ['겨울','눈 내린 객실동과 따뜻한 온돌',['img/winter-snow.jpg','img/hero-night-house.jpg'],'눈 내린 모습은 실제 객실동 사진에 눈을 입혀 표현했습니다.',
+  {id:'kQTkEi-MXBA',title:'동화 속 한 장면 같은 미소가든펜션의 겨울 ☃️ 낭만 가득한 눈 오는 밤'}]
 ];
-document.querySelectorAll('[data-season]').forEach(el=>{
-  el.insertAdjacentHTML('beforeend',`<div class="cnt">사진 ${SEASONS[+el.dataset.season][2].length}</div>`);
-  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});
-});
 
 /* ────────── 렌더 ────────── */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const vbadge=y=>y?`<span class="qr play" data-play>▶ 영상<span class="vlab"> 보기</span></span>`:'';
+document.querySelectorAll('[data-season]').forEach(el=>{
+  const s=SEASONS[+el.dataset.season];
+  el.insertAdjacentHTML('beforeend',`<div class="cnt">사진 ${s[2].length}</div>${vbadge(s[4])}`);
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});
+});
 
 document.getElementById('fgrid').innerHTML=FAC.map((f,i)=>`
   <button class="fcard rv${f.big?' big':''}" data-fac="${i}">
@@ -1075,7 +1080,8 @@ document.addEventListener('click',e=>{
   const sb=e.target.closest('[data-season]');
   if(sb){
     const s=SEASONS[+sb.dataset.season];
-    open(s[2],`<div class="kind">사계절</div><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p>${s[3]?`<p class="fnote">${esc(s[3])}</p>`:''}`);
+    open(s[2],`<div class="kind">사계절</div><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p>${s[3]?`<p class="fnote">${esc(s[3])}</p>`:''}${s[4]?ytHTML(s[4],jump):''}`);
+    if(jump)toVideo();
   }
 });
 
