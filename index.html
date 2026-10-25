@@ -342,6 +342,7 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px
 .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}
 .btn{padding:15px 30px;border-radius:100px;font-size:.92rem;font-weight:600;
   border:1px solid var(--gold);color:var(--gold);transition:.25s;display:inline-block}
+button.btn{background:none;font-family:inherit;cursor:pointer}
 .btn:hover{background:var(--gold);color:var(--ink)}
 .btn.fill{background:var(--gold);color:var(--ink)}
 .btn.fill:hover{background:transparent;color:var(--gold)}
@@ -869,6 +870,7 @@ footer .brand{margin-bottom:14px}
 </div>
 
 <script src="rooms.js"></script>
+<script src="share.js" defer></script>
 <script>
 /* ────────── 데이터 ────────── */
 const BOOK='https://booking.ddnayo.com/booking-calendar?accommodationId=100751';
@@ -1001,7 +1003,8 @@ function paint(){
   mcount.textContent=`${gi+1} / ${gal.length}`;
   const on=thumbs.children[gi];if(on)on.scrollIntoView({block:'nearest',inline:'nearest'});
 }
-function open(photos,html){
+function open(photos,html,url){
+  photos=photos.map(p=>new URL(p,location.href).href);   // 주소를 /rooms/N.html 로 바꾸기 전에 사진 경로를 절대 경로로 고정
   gal=photos;gi=0;lastFocus=document.activeElement;
   stage.querySelectorAll('img').forEach(n=>n.remove());
   const first=stage.firstChild;
@@ -1010,8 +1013,9 @@ function open(photos,html){
   thumbs.style.display=photos.length>1?'flex':'none';
   document.getElementById('mprev').style.display=document.getElementById('mnext').style.display=photos.length>1?'':'none';
   mbody.innerHTML=html;
-  // 창을 열 때 기록 한 칸을 남겨, 폰·브라우저 뒤로가기가 사이트를 나가지 않고 창만 닫게 한다
-  if(!modal.classList.contains('open'))history.pushState({modal:1},'');
+  // 창을 열 때 기록 한 칸을 남겨, 폰·브라우저 뒤로가기가 사이트를 나가지 않고 창만 닫게 한다.
+  // 객실 창은 주소창도 그 방 주소(/rooms/7.html)로 — 브라우저 「공유」로 보내도 그 방이 열린다 (10/25)
+  if(!modal.classList.contains('open')){try{history.pushState({modal:1},'',url)}catch(_){history.pushState({modal:1},'')}}
   modal.classList.add('open');document.body.style.overflow='hidden';
   paint();document.getElementById('mclose').focus();
 }
@@ -1070,8 +1074,9 @@ document.addEventListener('click',e=>{
       <div class="btns" style="justify-content:flex-start;margin-top:0">
         <a class="btn fill" href="${BOOK}" target="_blank" rel="noopener">실시간 예약하기</a>
         <a class="btn" href="tel:043-653-2885">전화 문의</a>
-        <a class="btn" href="rooms/${r.num}.html">객실 상세 페이지</a>
-      </div>`);
+        <a class="btn" href="/rooms/${r.num}.html">객실 상세 페이지</a>
+        <button class="btn" type="button" data-share="/rooms/${r.num}.html" data-title="미소가든펜션캠핑장 ${esc(r.n)}">🔗 이 방 공유하기</button>
+      </div>`,`/rooms/${r.num}.html`);
     if(jump)toVideo();
     return;
   }
