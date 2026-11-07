@@ -73,7 +73,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--gold);background:#fff
   <section class="card" id="listCard" hidden>
     <h2>글 목록</h2>
     <p class="hint">고칠 글을 누르거나, 새 글을 직접 쓰세요.</p>
-    <div class="row" style="margin:0 0 12px"><button class="btn solid" id="newBtn">+ 새 글 쓰기</button></div>
+    <div class="row" style="margin:0 0 12px"><button class="btn solid" id="newBtn">+ 새 글 쓰기</button><button class="btn ghost" id="shareBtn">직원·사장님 연결 링크 복사</button></div>
     <div class="list" id="list"></div>
   </section>
 
@@ -339,6 +339,17 @@ $('save').onclick=async()=>{
   finally{$('save').disabled=false}
 };
 
+/* 연결 링크: admin.html#key=토큰 을 한 번 누르면 그 기기에 열쇠가 저장되고 주소에서 지워진다 */
+if(location.hash.startsWith('#key=')){
+  try{localStorage.setItem(KEY,decodeURIComponent(location.hash.slice(5)))}catch(e){}
+  history.replaceState(null,'',location.pathname);
+}
+$('shareBtn').onclick=async()=>{
+  if(!confirm('이 링크를 받은 사람은 이 홈페이지 블로그에 글을 쓰고 고칠 수 있습니다.\n믿을 수 있는 직원·사장님께만 카톡 1:1로 보내 주세요.\n\n링크를 복사할까요?'))return;
+  const link=location.origin+location.pathname+'#key='+encodeURIComponent(token());
+  try{await navigator.clipboard.writeText(link);alert('복사했습니다. 카톡 1:1 대화창에 붙여 넣어 보내세요.\n받은 분은 링크를 한 번 누르면 바로 연결됩니다.')}
+  catch(e){prompt('아래 링크를 길게 눌러 복사하세요',link)}
+};
 gate();
 </script>
 </body>
