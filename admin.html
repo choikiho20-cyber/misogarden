@@ -59,21 +59,29 @@ input:focus,textarea:focus{outline:none;border-color:var(--gold);background:#fff
 </style>
 </head>
 <body>
-<header><b>미소가든 블로그 관리</b><button class="who" id="who" title="열쇠 바꾸기·끊기">연결 안 됨</button></header>
+<header><b>미소가든 블로그 관리</b><button class="who" id="who" title="나가기·관리자 연결">잠김</button></header>
 
 <main>
   <section class="card" id="gate">
-    <h2>열쇠 연결</h2>
-    <p class="hint">처음 한 번만 GitHub 토큰을 넣어 주세요. 이 기기에만 저장되고, GitHub 말고는 어디에도 보내지 않습니다.</p>
-    <label for="tok">GitHub 토큰</label>
-    <input id="tok" type="password" autocomplete="off" placeholder="github_pat_...">
-    <div class="row"><button class="btn solid" id="tokSave">연결</button><button class="btn ghost" id="tokClear" hidden>연결 끊기</button></div>
+    <h2>관리 화면 들어가기</h2>
+    <div id="pwBox">
+      <p class="hint" id="pwHint">비밀번호를 넣으세요. 이 기기에서는 다음부터 다시 묻지 않습니다.</p>
+      <label for="pw">비밀번호</label>
+      <input id="pw" type="password" autocomplete="current-password">
+      <div class="row"><button class="btn solid" id="pwGo">들어가기</button></div>
+    </div>
+    <details id="adv" style="margin-top:16px"><summary class="hint" style="cursor:pointer">관리자용: GitHub 토큰으로 연결</summary>
+      <label for="tok">GitHub 토큰</label>
+      <input id="tok" type="password" autocomplete="off" placeholder="github_pat_...">
+      <div class="row"><button class="btn" id="tokSave">연결</button></div>
+    </details>
+    <div class="row"><button class="btn ghost" id="tokClear" hidden>이 기기에서 나가기</button></div>
   </section>
 
   <section class="card" id="listCard" hidden>
     <h2>글 목록</h2>
     <p class="hint">고칠 글을 누르거나, 새 글을 직접 쓰세요.</p>
-    <div class="row" style="margin:0 0 12px"><button class="btn solid" id="newBtn">+ 새 글 쓰기</button><button class="btn ghost" id="shareBtn">직원·사장님 연결 링크 만들기</button></div>
+    <div class="row" style="margin:0 0 12px"><button class="btn solid" id="newBtn">+ 새 글 쓰기</button><button class="btn ghost" id="pwSet">비밀번호 정하기·바꾸기</button></div>
     <div class="list" id="list"></div>
   </section>
 
@@ -186,7 +194,8 @@ function gate(){
   const on=!!token();
   $('gate').hidden=on; $('listCard').hidden=!on; $('tokClear').hidden=!on; $('edCard').hidden=true; $('savebar').hidden=true;
   $('tok').value=''; $('tok').placeholder=on?'연결됨 — 바꾸시려면 새 토큰 입력':'github_pat_...';
-  $('who').textContent=on?'연결됨':'연결 안 됨';
+  $('pwBox').hidden=on;
+  $('who').textContent=on?'들어와 있음':'잠김';
   if(on) loadList();
 }
 $('tokSave').onclick=async()=>{
@@ -339,22 +348,60 @@ $('save').onclick=async()=>{
   finally{$('save').disabled=false}
 };
 
-/* 연결 링크: admin.html#key=토큰 을 한 번 누르면 그 기기에 열쇠가 저장되고 주소에서 지워진다 */
-if(location.hash.startsWith('#key=')){
-  try{localStorage.setItem(KEY,decodeURIComponent(location.hash.slice(5)))}catch(e){}
-  history.replaceState(null,'',location.pathname);
+/* ── 비밀번호 잠금: 우리 서버·글해줌 없이 이 홈페이지 혼자 동작 ──
+   admin-key.json 에 「이 저장소만 열리는 열쇠」를 비밀번호로 잠가(PBKDF2 60만 회 + AES-GCM) 넣어 둔다.
+   비밀번호가 맞으면 브라우저 안에서만 풀려 이 기기에 저장된다. 공개 저장소라 잠긴 파일은 누구나 받을 수 있으므로
+   비밀번호는 10자 이상·숫자만은 안 됨으로 강제한다(짧으면 컴퓨터로 대입해 풀 수 있음). */
+const u8b64=u=>{let b='';u.forEach(x=>b+=String.fromCharCode(x));return btoa(b)};
+const b64u8=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function lockKey(pw,salt,iter){
+  const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw.normalize('NFC')),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
 }
-$('shareBtn').onclick=async()=>{
-  /* 내 열쇠는 절대 담지 않는다 — 받을 사람 전용 열쇠(이 저장소만·기간 있음)를 따로 넣게 해서, 그만두면 그 열쇠만 지우면 되게 */
-  const k=(prompt('받을 분 전용 GitHub 토큰을 붙여 넣어 주세요.\n(GitHub에서 이 홈페이지 저장소 하나만 · 1년 이내로 새로 만든 것 — 이름에 받을 분 이름을 적어 두세요)')||'').trim();
+async function seal(tok,pw){
+  const iter=600000, salt=crypto.getRandomValues(new Uint8Array(16)), iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await lockKey(pw,salt,iter),new TextEncoder().encode(tok)));
+  return {v:1,iter,salt:u8b64(salt),iv:u8b64(iv),ct:u8b64(ct)};
+}
+async function unseal(box,pw){
+  return new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u8(box.iv)},await lockKey(pw,b64u8(box.salt),box.iter),b64u8(box.ct)));
+}
+let keyBox=null;
+fetch('/admin-key.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(b=>{keyBox=b&&b.ct?b:null;
+  if(!keyBox){$('pwHint').textContent='아직 비밀번호가 정해지지 않았습니다. 처음 한 번은 관리자가 아래 「관리자용」으로 연결해 비밀번호를 정해 주세요.';$('adv').open=true}
+}).catch(()=>{});
+async function pwLogin(){
+  const pw=$('pw').value; if(!pw) return;
+  if(!keyBox) return alert('아직 비밀번호가 정해지지 않았습니다.');
+  $('pwGo').disabled=true; $('pwGo').textContent='확인 중…';
+  try{
+    let tok; try{tok=await unseal(keyBox,pw)}catch(e){throw new Error('비밀번호가 맞지 않습니다.')}
+    localStorage.setItem(KEY,tok);
+    try{await gh('posts.json?ref='+BRANCH)}catch(e){localStorage.removeItem(KEY);throw new Error('비밀번호는 맞는데 열쇠가 만료됐거나 지워졌습니다. 관리자에게 비밀번호를 다시 정해 달라고 하세요.')}
+    $('pw').value=''; gate();
+  }catch(e){alert(e.message)}
+  finally{$('pwGo').disabled=false; $('pwGo').textContent='들어가기'}
+}
+$('pwGo').onclick=pwLogin;
+$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')pwLogin()});
+$('pwSet').onclick=async()=>{
+  const k=(prompt('사장님·직원이 쓸 GitHub 토큰을 붙여 넣어 주세요.\n(이 홈페이지 저장소 하나만 · Contents 읽기/쓰기 · 기간은 길게(1년~만료 없음) 새로 만든 것)')||'').trim();
   if(!k) return;
-  if(k===token()) return alert('지금 이 기기에 넣은 열쇠와 같습니다. 받을 분 전용 열쇠를 새로 만들어 넣어 주세요.');
+  if(k===token()&&!confirm('지금 이 기기에 넣은 열쇠와 같습니다. 이 열쇠가 여러 홈페이지를 여는 열쇠라면 [취소]하고 이 홈페이지 전용 열쇠를 새로 만들어 주세요.\n이 홈페이지 전용이 맞으면 [확인].'))return;
   try{const r=await fetch(API+'posts.json?ref='+BRANCH,{headers:{Authorization:'Bearer '+k,Accept:'application/vnd.github+json'}});if(!r.ok)throw 0}
   catch(e){return alert('이 열쇠로는 이 홈페이지에 연결되지 않습니다. 저장소 선택과 권한(Contents 읽기/쓰기)을 확인해 주세요.')}
-  if(!confirm('이 링크를 받은 분은 이 홈페이지 블로그에 글을 쓰고 고칠 수 있습니다.\n카톡 1:1로만 보내 주세요. 그만두시면 GitHub에서 그 열쇠만 지우면 됩니다.\n\n링크를 복사할까요?'))return;
-  const link=location.origin+location.pathname+'#key='+encodeURIComponent(k);
-  try{await navigator.clipboard.writeText(link);alert('복사했습니다. 카톡 1:1 대화창에 붙여 넣어 보내세요.\n받은 분은 링크를 한 번 누르면 바로 연결됩니다.')}
-  catch(e){prompt('아래 링크를 길게 눌러 복사하세요',link)}
+  const p1=prompt('새 비밀번호 (10자 이상, 숫자만은 안 됩니다)\n예: 미소가든봄바람2885'); if(!p1) return;
+  if(p1.length<10||/^\d+$/.test(p1)) return alert('10자 이상, 숫자만은 안 됩니다. 이 비밀번호 하나로 홈페이지 글을 고칠 수 있어서 짧으면 위험합니다.');
+  if(prompt('한 번 더 넣어 주세요')!==p1) return alert('두 번 넣은 비밀번호가 다릅니다.');
+  try{
+    msg('비밀번호 잠금 저장 중… (10초쯤 걸릴 수 있습니다)');
+    const box=await seal(k,p1);
+    let sha=null; try{sha=(await gh('admin-key.json?ref='+BRANCH)).sha}catch(e){}
+    await put('admin-key.json',b64text(JSON.stringify(box)),sha,'블로그 관리: 비밀번호 '+(sha?'변경':'설정'));
+    keyBox=box;
+    alert('비밀번호를 정했습니다. 1~2분 뒤부터 이 비밀번호로 들어갈 수 있습니다.\n\n사장님·직원분께는 주소와 비밀번호만 알려 주세요:\n'+location.origin+'/admin.html\n\n직원이 그만두면 비밀번호를 바꾸세요.');
+    msg('');
+  }catch(e){alert('저장 실패: '+e.message)}
 };
 gate();
 </script>
