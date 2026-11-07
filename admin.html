@@ -73,7 +73,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--gold);background:#fff
   <section class="card" id="listCard" hidden>
     <h2>글 목록</h2>
     <p class="hint">고칠 글을 누르거나, 새 글을 직접 쓰세요.</p>
-    <div class="row" style="margin:0 0 12px"><button class="btn solid" id="newBtn">+ 새 글 쓰기</button><button class="btn ghost" id="shareBtn">직원·사장님 연결 링크 복사</button></div>
+    <div class="row" style="margin:0 0 12px"><button class="btn solid" id="newBtn">+ 새 글 쓰기</button><button class="btn ghost" id="shareBtn">직원·사장님 연결 링크 만들기</button></div>
     <div class="list" id="list"></div>
   </section>
 
@@ -345,8 +345,14 @@ if(location.hash.startsWith('#key=')){
   history.replaceState(null,'',location.pathname);
 }
 $('shareBtn').onclick=async()=>{
-  if(!confirm('이 링크를 받은 사람은 이 홈페이지 블로그에 글을 쓰고 고칠 수 있습니다.\n믿을 수 있는 직원·사장님께만 카톡 1:1로 보내 주세요.\n\n링크를 복사할까요?'))return;
-  const link=location.origin+location.pathname+'#key='+encodeURIComponent(token());
+  /* 내 열쇠는 절대 담지 않는다 — 받을 사람 전용 열쇠(이 저장소만·기간 있음)를 따로 넣게 해서, 그만두면 그 열쇠만 지우면 되게 */
+  const k=(prompt('받을 분 전용 GitHub 토큰을 붙여 넣어 주세요.\n(GitHub에서 이 홈페이지 저장소 하나만 · 1년 이내로 새로 만든 것 — 이름에 받을 분 이름을 적어 두세요)')||'').trim();
+  if(!k) return;
+  if(k===token()) return alert('지금 이 기기에 넣은 열쇠와 같습니다. 받을 분 전용 열쇠를 새로 만들어 넣어 주세요.');
+  try{const r=await fetch(API+'posts.json?ref='+BRANCH,{headers:{Authorization:'Bearer '+k,Accept:'application/vnd.github+json'}});if(!r.ok)throw 0}
+  catch(e){return alert('이 열쇠로는 이 홈페이지에 연결되지 않습니다. 저장소 선택과 권한(Contents 읽기/쓰기)을 확인해 주세요.')}
+  if(!confirm('이 링크를 받은 분은 이 홈페이지 블로그에 글을 쓰고 고칠 수 있습니다.\n카톡 1:1로만 보내 주세요. 그만두시면 GitHub에서 그 열쇠만 지우면 됩니다.\n\n링크를 복사할까요?'))return;
+  const link=location.origin+location.pathname+'#key='+encodeURIComponent(k);
   try{await navigator.clipboard.writeText(link);alert('복사했습니다. 카톡 1:1 대화창에 붙여 넣어 보내세요.\n받은 분은 링크를 한 번 누르면 바로 연결됩니다.')}
   catch(e){prompt('아래 링크를 길게 눌러 복사하세요',link)}
 };
