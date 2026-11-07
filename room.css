@@ -146,6 +146,11 @@ footer .dim{color:var(--gold-dim)}
 .blog-post-content table{width:100%;border-collapse:collapse;margin:6px 0 24px;font-size:.88rem}
 .blog-post-content th,.blog-post-content td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
 .blog-post-content th{background:var(--ink2);color:var(--gold);font-weight:600}
+/* 글해줌 표는 흰 바탕용 인라인 색(#212529·#f8f9fa)이 박혀 와서 어두운 바탕에서 안 보임 → 덮어쓰기 */
+.blog-post-content th,.blog-post-content td{border-color:var(--line)!important}
+.blog-post-content th{background:var(--ink2)!important;color:var(--gold)!important}
+.blog-post-content td{background:transparent!important;color:#DDD8CC!important}
+.blog-post-content td a{color:var(--gold)!important}
 @media(max-width:560px){.blog-post-content table{font-size:.8rem}.blog-post-content th,.blog-post-content td{padding:8px}}
 .related{margin-top:60px;border-top:1px solid var(--line);padding-top:14px}
 .related .blist{margin-top:6px}

@@ -183,7 +183,8 @@ async function loadList(){
     posts=JSON.parse(b64dec((await gh('posts.json?ref='+BRANCH)).content));
     $('list').innerHTML=posts.slice().sort((a,b)=>b.id-a.id).map(p=>
       `<a href="#${p.id}" data-id="${p.id}"><div class="d">${escA(p.date)} · ${p.id}번 글</div>${escA(p.title)}</a>`).join('');
-  }catch(e){$('list').textContent='목록을 못 불러왔습니다: '+e.message}
+  }catch(e){$('list').textContent='목록을 못 불러왔습니다: '+e.message;return}
+  const h=+location.hash.slice(1); if(h&&posts.some(p=>p.id===h)){history.replaceState(null,'',location.pathname);openPost(h)}
 }
 $('list').onclick=e=>{const a=e.target.closest('a[data-id]');if(!a)return;e.preventDefault();openPost(+a.dataset.id)};
 
