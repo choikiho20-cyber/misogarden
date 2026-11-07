@@ -129,6 +129,7 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px
 .hero .sub{margin-top:22px;font-size:clamp(.95rem,1.8vw,1.14rem);color:var(--paper-dim);max-width:46ch;word-break:keep-all}
 .hero .loc{display:flex;align-items:center;gap:10px;font-size:clamp(.92rem,1.3vw,1.02rem);
   letter-spacing:.12em;color:#E6C27F;margin-bottom:20px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 14px rgba(0,0,0,.55)}
+.hero .notice{display:inline-block;margin-bottom:18px;padding:8px 16px;border-radius:100px;background:rgba(201,162,92,.92);color:#0C100E;font-weight:700;font-size:clamp(.88rem,1.3vw,.98rem);word-break:keep-all}
 .hero .loc::before{content:'';width:42px;height:1px;background:var(--gold)}
 .dots{display:flex;gap:8px;margin-top:30px}
 .dots button{width:26px;height:2px;background:rgba(244,241,234,.3);transition:background .3s}
@@ -442,15 +443,18 @@ footer .brand{margin-bottom:14px}
 
 <!-- ══ HERO ══ -->
 <header class="hero" id="hero">
+  <!--ED:slides-->
   <div class="slide on"><picture><source media="(max-width:760px)" srcset="img/hero-aerial-day-m.jpg"><img src="img/hero-aerial-day.jpg" alt="미소가든펜션캠핑장 낮 항공 전경 — 주차장·이지캠핑·객실동" fetchpriority="high"></picture></div>
   <div class="slide"><picture><source media="(max-width:760px)" data-srcset="img/hero-tunnel-m.jpg"><img data-src="img/hero-tunnel.jpg" alt="나무 터널 산책로"></picture></div>
   <div class="slide"><picture><source media="(max-width:760px)" data-srcset="img/hero-pool-m.jpg"><img data-src="img/hero-pool.jpg" alt="그늘막 아래 야외 수영장 두 곳"></picture></div>
   <div class="slide"><picture><source media="(max-width:760px)" data-srcset="img/hero-night-house-m.jpg"><img data-src="img/hero-night-house.jpg" alt="조명이 켜진 저녁의 객실동"></picture></div>
   <div class="slide"><picture><source media="(max-width:760px)" data-srcset="img/hero-aerial-night-m.jpg"><img data-src="img/hero-aerial-night.jpg" alt="미소 네온사인이 보이는 야간 항공 전경"></picture></div>
+  <!--/ED:slides-->
   <div class="wrap">
+    <!--ED:notice--><!--/ED:notice-->
     <div class="loc">충북 제천</div>
-    <h1>마을 하나를<br>통째로 빌립니다</h1>
-    <p class="sub">1만 평 부지에 독채 16채. 세미나실과 수영장, 노래방과 편의점까지<br>단지 안에서 끝나는 제천의 독채 스테이.</p>
+    <h1><!--ED:title-->마을 하나를<br>통째로 빌립니다<!--/ED:title--></h1>
+    <p class="sub"><!--ED:sub-->1만 평 부지에 독채 16채. 세미나실과 수영장, 노래방과 편의점까지<br>단지 안에서 끝나는 제천의 독채 스테이.<!--/ED:sub--></p>
     <div class="dots" id="dots"></div>
   </div>
 </header>
@@ -933,13 +937,7 @@ const CAMP=[
 ];
 
 // 계절 카드 — 누르면 그 계절 사진을 넘겨 본다. 4번째 칸은 창 아래 작은 안내 (겨울 = 실제 사진에 눈을 입힌 그림 — 첫눈 실사 생기면 교체)
-const SEASONS=[
- ['봄','잔디밭과 철쭉, 캠핑장 개장',['img/spring-lawn.jpg','img/spring-lawn2.jpg','img/deck-tunnel.jpg','img/tunnel-walk.jpg']],
- ['여름','수영장 · 계곡 · 평상',['img/valley2.jpg','img/valley.jpg','img/hero-pool.jpg','img/pool-cover.jpg','img/valleycamp.jpg','img/village4.jpg']],
- ['가을','가로수길 단풍',['img/tunnel-fall.jpg','img/lawn.jpg','img/pool-outdoor.jpg']],
- ['겨울','눈 내린 객실동과 따뜻한 온돌',['img/winter-snow.jpg','img/hero-night-house.jpg'],'눈 내린 모습은 실제 객실동 사진에 눈을 입혀 표현했습니다.',
-  {id:'kQTkEi-MXBA',title:'동화 속 한 장면 같은 미소가든펜션의 겨울 ☃️ 낭만 가득한 눈 오는 밤'}]
-];
+const SEASONS=/*ED:seasons*/[["봄", "잔디밭과 철쭉, 캠핑장 개장", ["img/spring-lawn.jpg", "img/spring-lawn2.jpg", "img/deck-tunnel.jpg", "img/tunnel-walk.jpg"]], ["여름", "수영장 · 계곡 · 평상", ["img/valley2.jpg", "img/valley.jpg", "img/hero-pool.jpg", "img/pool-cover.jpg", "img/valleycamp.jpg", "img/village4.jpg"]], ["가을", "가로수길 단풍", ["img/tunnel-fall.jpg", "img/lawn.jpg", "img/pool-outdoor.jpg"]], ["겨울", "눈 내린 객실동과 따뜻한 온돌", ["img/winter-snow.jpg", "img/hero-night-house.jpg"], "눈 내린 모습은 실제 객실동 사진에 눈을 입혀 표현했습니다.", {"id": "kQTkEi-MXBA", "title": "동화 속 한 장면 같은 미소가든펜션의 겨울 ☃️ 낭만 가득한 눈 오는 밤"}]]/*/ED:seasons*/;
 
 /* ────────── 렌더 ────────── */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

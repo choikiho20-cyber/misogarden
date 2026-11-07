@@ -62,6 +62,17 @@ input:focus,textarea:focus{outline:none;border-color:var(--gold);background:#fff
 .guide h3{font-size:15px;margin:18px 0 6px;color:var(--gold)}
 .guide ul,.guide ol{margin:0 0 0 20px;font-size:15px}
 .guide li{margin:3px 0}
+.pic{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.pic img{width:96px;height:60px;object-fit:cover;border-radius:3px;flex:none;background:var(--paper)}
+.pic input{min-height:40px;padding:8px 10px;font-size:14px}
+.pic .b{display:flex;gap:4px;flex:none}
+.pic .b button{min-width:38px;min-height:38px;border:1px solid var(--line);border-radius:3px;background:var(--paper)}
+.pics{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.pics figure{position:relative;margin:0}
+.pics img{width:104px;height:72px;object-fit:cover;border-radius:3px;display:block}
+.pics figure button{position:absolute;top:3px;min-width:28px;min-height:28px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:13px}
+.pics .x{right:3px}.pics .l{left:3px}
+.pics .add{width:104px;height:72px;border:1px dashed var(--gold);border-radius:3px;color:var(--gold);background:#fff}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -84,6 +95,29 @@ input:focus,textarea:focus{outline:none;border-color:var(--gold);background:#fff
     </details>
     <div class="row"><button class="btn ghost" id="tokClear" hidden>이 기기에서 나가기</button></div>
   </section>
+
+  <section class="card" id="homeCard" hidden>
+    <h2>첫 화면 · 공지</h2>
+    <p class="hint">홈페이지를 열면 맨 처음 보이는 큰 사진과 글입니다.</p>
+    <label for="notice">공지 한 줄 <small>(예: 11/15~16 수영장 휴무 · 비우면 안 보입니다)</small></label>
+    <input id="notice" type="text" maxlength="60">
+    <label for="htitle">큰 제목 <small>(줄을 바꾸려면 Enter)</small></label>
+    <textarea id="htitle" rows="2" style="min-height:64px"></textarea>
+    <label for="hsub">소개 문장</label>
+    <textarea id="hsub" rows="3"></textarea>
+    <label>큰 사진 <small>(위에서부터 순서대로 넘어갑니다 · 맨 위 사진이 처음 보입니다)</small></label>
+    <div id="slides"></div>
+    <div class="row"><button class="btn" id="slideAdd">+ 큰 사진 추가</button></div>
+    <div class="row"><button class="btn solid" id="homeSave">첫 화면 저장</button><span class="hint" id="homeMsg" style="margin:0"></span></div>
+  </section>
+
+  <section class="card" id="seasonCard" hidden>
+    <h2>계절 사진</h2>
+    <p class="hint">홈페이지 「사계절」 칸의 사진입니다. 계절마다 첫 사진이 카드 표지가 됩니다.</p>
+    <div id="seasons"></div>
+    <div class="row"><button class="btn solid" id="seasonSave">계절 사진 저장</button><span class="hint" id="seasonMsg" style="margin:0"></span></div>
+  </section>
+  <input id="picFile" type="file" accept="image/*" multiple hidden>
 
   <section class="card" id="listCard" hidden>
     <h2>글 목록</h2>
@@ -144,6 +178,18 @@ input:focus,textarea:focus{outline:none;border-color:var(--gold);background:#fff
       <ul>
         <li><b>넣기</b>: 넣을 자리를 한 번 누르고 → [사진 넣기]. 여러 장 한 번에 됩니다. 크기는 자동으로 줄어듭니다.</li>
         <li><b>빼기</b>: 사진을 눌러 빨간 테두리가 생기면 → [고른 사진 빼기]</li>
+      </ul>
+      <h3>4-1. 첫 화면 · 공지 바꾸기</h3>
+      <ul>
+        <li><b>공지 한 줄</b>: 홈페이지 맨 위 큰 사진 위에 금색 띠로 보입니다. 지나면 칸을 비우고 저장하세요.</li>
+        <li><b>큰 제목·소개 문장</b>: 고치고 [첫 화면 저장]</li>
+        <li><b>큰 사진</b>: [+ 큰 사진 추가] · ▲▼로 순서 · ✕로 빼기. 맨 위 사진이 처음 보입니다. 가로로 찍은 밝은 사진이 좋습니다(휴대폰 화면은 가운데를 잘라 씁니다).</li>
+        <li>사진 옆 설명 칸은 검색엔진이 읽습니다. 「무엇이 보이는 사진인지」 짧게 적어 주세요.</li>
+      </ul>
+      <h3>4-2. 계절 사진</h3>
+      <ul>
+        <li>계절마다 [+ 사진]으로 추가, ✕로 빼기, ◀로 앞으로. <b>맨 앞 사진이 카드 표지</b>입니다.</li>
+        <li>다 고치고 [계절 사진 저장]</li>
       </ul>
       <h3>5. 검색에 잘 걸리는 요령</h3>
       <ul>
@@ -219,6 +265,20 @@ function addLlms(txt,title,url,summary){
   const nl=txt.includes('\r\n')?'\r\n':'\n';
   return txt.replace(/## 글 목록(\r?\n)+/,()=>'## 글 목록'+nl+nl+'- ['+title+']('+url+'): '+summary.slice(0,200)+nl);
 }
+// 첫 화면·계절 사진: index.html 의 표식(<!--ED:이름--> … <!--/ED:이름-->, 계절은 ED:seasons 주석 표식) 사이만 바꾼다
+function region(html,name){const a='<!--ED:'+name+'-->',b='<!--/ED:'+name+'-->',i=html.indexOf(a),j=html.indexOf(b);return i<0||j<i?null:html.slice(i+a.length,j)}
+function setRegion(html,name,val){const a='<!--ED:'+name+'-->',b='<!--/ED:'+name+'-->',i=html.indexOf(a),j=html.indexOf(b);if(i<0||j<i)throw new Error('홈페이지에서 '+name+' 칸을 찾지 못했습니다');return html.slice(0,i+a.length)+val+html.slice(j)}
+function parseSlides(h){return [...h.matchAll(/<div class="slide[^"]*">([\s\S]*?)<\/div>/g)].map(m=>{
+  const g=(re)=>(m[1].match(re)||[])[1]||'';
+  return {d:g(/<img[^>]*?(?:data-src|src)="([^"]+)"/),m:g(/<source[^>]*?(?:data-srcset|srcset)="([^"]+)"/),alt:g(/alt="([^"]*)"/)};
+})}
+function buildSlides(list){return '\n'+list.map((x,i)=>i===0
+  ?`  <div class="slide on"><picture><source media="(max-width:760px)" srcset="${escA(x.m)}"><img src="${escA(x.d)}" alt="${escA(x.alt)}" fetchpriority="high"></picture></div>`
+  :`  <div class="slide"><picture><source media="(max-width:760px)" data-srcset="${escA(x.m)}"><img data-src="${escA(x.d)}" alt="${escA(x.alt)}"></picture></div>`).join('\n')+'\n  '}
+function getSeasons(html){const a='/*ED:seasons*/',b='/*/ED:seasons*/',i=html.indexOf(a),j=html.indexOf(b);return i<0?null:JSON.parse(html.slice(i+a.length,j))}
+function setSeasons(html,data){const a='/*ED:seasons*/',b='/*/ED:seasons*/',i=html.indexOf(a),j=html.indexOf(b);if(i<0)throw new Error('계절 칸을 찾지 못했습니다');return html.slice(0,i+a.length)+JSON.stringify(data).replace(/</g,'\\u003c')+html.slice(j)}
+const toText=h=>{const t=document.createElement('textarea');t.innerHTML=h.replace(/<br\s*\/?>/gi,'\n');return t.value.trim()};
+const toHtml=t=>escA(t.trim()).replace(/\n+/g,'<br>');
 /* 불러온 본문에서 스크립트·on* 속성 제거 (토큰이 이 화면에 있으므로) */
 function clean(html){
   const t=document.createElement('template'); t.innerHTML=html;
@@ -251,10 +311,11 @@ function msg(t,kind){const m=$('msg');m.textContent=t;m.className='msg '+(kind||
 function gate(){
   const on=!!token();
   $('gate').hidden=on; $('listCard').hidden=!on; $('tokClear').hidden=!on; $('edCard').hidden=true; $('savebar').hidden=true;
+  $('homeCard').hidden=true; $('seasonCard').hidden=true;
   $('tok').value=''; $('tok').placeholder=on?'연결됨 — 바꾸시려면 새 토큰 입력':'github_pat_...';
   $('pwBox').hidden=on;
   $('who').textContent=on?'들어와 있음':'잠김';
-  if(on) loadList();
+  if(on){ loadList(); loadHome(); }
 }
 $('tokSave').onclick=async()=>{
   const v=$('tok').value.trim(); if(!v) return alert('토큰을 넣어 주세요.');
@@ -293,7 +354,7 @@ function show(c,title,summary,tags,body,head,hint){
   $('title').value=title||''; $('summary').value=summary||''; $('tags').value=(Array.isArray(tags)?tags:[]).join(', ');
   $('ed').innerHTML=body; $('raw').hidden=true; $('ed').hidden=false; $('rawBtn').classList.remove('on');
   $('edHead').textContent=head;
-  $('listCard').hidden=true; $('edCard').hidden=false; $('savebar').hidden=false;
+  $('listCard').hidden=true; $('homeCard').hidden=true; $('seasonCard').hidden=true; $('edCard').hidden=false; $('savebar').hidden=false;
   dirty=false; msg(hint); scrollTo(0,0);
 }
 $('newBtn').onclick=()=>show({id:null},'','',[],'<h2>소제목을 질문으로 적어 주세요 (예: 주차는 몇 대 되나요?)</h2><p>바로 아래 첫 문장에 답을 적어 주세요.</p>','새 글 쓰기','다 쓰면 [저장]을 누르세요 — 바로 홈페이지 블로그에 올라갑니다');
@@ -461,6 +522,97 @@ $('pwSet').onclick=async()=>{
     msg('');
   }catch(e){alert('저장 실패: '+e.message)}
 };
+/* ── 사진 줄이기 (공통) ── */
+async function shrink(file,maxW,crop){   // crop = 세로/가로 비율 (휴대폰 첫 화면용 가운데 자르기)
+  const bm=await createImageBitmap(file,{imageOrientation:'from-image'});
+  let sx=0,sy=0,sw=bm.width,sh=bm.height;
+  if(crop){const want=sw*crop; if(want<=sh){sy=(sh-want)/2;sh=want}else{const w2=sh/crop;sx=(sw-w2)/2;sw=w2}}
+  const k=Math.min(1,maxW/sw),w=Math.round(sw*k),h=Math.round(sh*k);
+  const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(bm,sx,sy,sw,sh,0,0,w,h);
+  const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.85));
+  const b64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(',')[1]);fr.readAsDataURL(blob)});
+  return {url:URL.createObjectURL(blob),b64};
+}
+const stampName=()=>today().replace(/-/g,'')+Date.now().toString().slice(-6);
+let pickTo=null;
+function pickPics(fn){pickTo=fn;$('picFile').value='';$('picFile').click()}
+$('picFile').onchange=async()=>{const fs=[...$('picFile').files];if(fs.length&&pickTo)await pickTo(fs)};
+const newPics=new Map();   // 화면용 주소 → {path,b64}
+const shown=p=>newPics.has(p)?p:'/'+p;   // 새로 고른 사진은 미리보기 주소, 아니면 홈페이지 주소
+
+/* ── 첫 화면 · 공지 ── */
+let slides=[], seasons=null;
+async function loadHome(){
+  try{
+    const html=b64dec((await gh('index.html?ref='+BRANCH)).content);
+    const n=region(html,'notice')||''; $('notice').value=toText(n.replace(/<[^>]+>/g,m=>m.startsWith('<br')?m:''));
+    $('htitle').value=toText(region(html,'title')||''); $('hsub').value=toText(region(html,'sub')||'');
+    slides=parseSlides(region(html,'slides')||''); drawSlides();
+    seasons=getSeasons(html); drawSeasons();
+    $('homeCard').hidden=false; $('seasonCard').hidden=!seasons;
+  }catch(e){$('homeMsg').textContent='첫 화면을 못 불러왔습니다: '+e.message}
+}
+function drawSlides(){
+  $('slides').innerHTML=slides.map((x,i)=>`<div class="pic"><img src="${escA(shown(x.d))}" alt=""><input type="text" value="${escA(x.alt)}" data-i="${i}" placeholder="사진 설명 (검색엔진용)"><div class="b"><button data-up="${i}" title="위로">▲</button><button data-dn="${i}" title="아래로">▼</button><button data-del="${i}" title="빼기">✕</button></div></div>`).join('');
+}
+$('slides').oninput=e=>{const i=e.target.dataset.i;if(i!=null)slides[i].alt=e.target.value};
+$('slides').onclick=e=>{const d=e.target.dataset;let i;
+  if(d.up!=null&&(i=+d.up)>0)[slides[i-1],slides[i]]=[slides[i],slides[i-1]];
+  else if(d.dn!=null&&(i=+d.dn)<slides.length-1)[slides[i+1],slides[i]]=[slides[i],slides[i+1]];
+  else if(d.del!=null){if(slides.length<2)return alert('큰 사진은 한 장 이상 있어야 합니다.');slides.splice(+d.del,1)}
+  else return; drawSlides();
+};
+$('slideAdd').onclick=()=>pickPics(async fs=>{
+  $('homeMsg').textContent='사진 준비 중…';
+  for(const f of fs){try{
+    const st=stampName(), D=await shrink(f,1920), M=await shrink(f,700,941/583);
+    const dp=`img/hero/${st}.jpg`, mp=`img/hero/${st}-m.jpg`;
+    newPics.set(D.url,{path:dp,b64:D.b64}); newPics.set(M.url,{path:mp,b64:M.b64});
+    slides.push({d:D.url,m:M.url,alt:'미소가든펜션캠핑장 '+(f.name.replace(/\.[^.]+$/,''))});
+  }catch(e){alert(f.name+' — 사진을 읽지 못했습니다.')}}
+  drawSlides(); $('homeMsg').textContent='[첫 화면 저장]을 눌러야 홈페이지에 올라갑니다';
+});
+$('homeSave').onclick=async()=>{
+  if(!$('htitle').value.trim()) return alert('큰 제목을 넣어 주세요.');
+  $('homeSave').disabled=true; $('homeMsg').textContent='저장 중…';
+  try{
+    for(const x of slides) for(const k of ['d','m']){const n=newPics.get(x[k]);if(n){await put(n.path,n.b64,null,'첫 화면 사진: '+n.path);newPics.delete(x[k]);x[k]=n.path}}
+    const f=await gh('index.html?ref='+BRANCH); let html=b64dec(f.content);
+    const nt=$('notice').value.trim();
+    html=setRegion(html,'notice',nt?`<p class="notice">${escA(nt)}</p>`:'');
+    html=setRegion(html,'title',toHtml($('htitle').value));
+    html=setRegion(html,'sub',toHtml($('hsub').value));
+    html=setRegion(html,'slides',buildSlides(slides));
+    await put('index.html',b64text(html),f.sha,'첫 화면·공지 수정');
+    $('homeMsg').textContent='저장 완료 — 1~2분 뒤 홈페이지에 반영됩니다';
+  }catch(e){$('homeMsg').textContent='저장 실패: '+e.message+' — 다시 눌러 주세요'}
+  finally{$('homeSave').disabled=false}
+};
+
+/* ── 계절 사진 ── */
+function drawSeasons(){
+  if(!seasons) return;
+  $('seasons').innerHTML=seasons.map((s,si)=>`<h3 style="margin:14px 0 2px;font-size:15px">${escA(s[0])} <small class="hint">${escA(s[1])}</small></h3><div class="pics">`+
+    s[2].map((p,pi)=>`<figure><img src="${escA(shown(p))}" alt="">${pi?`<button class="l" data-s="${si}" data-l="${pi}" title="앞으로">◀</button>`:''}<button class="x" data-s="${si}" data-x="${pi}" title="빼기">✕</button></figure>`).join('')+
+    `<button class="add" data-s="${si}" data-add="1">+ 사진</button></div>`).join('');
+}
+$('seasons').onclick=e=>{const d=e.target.dataset;if(d.s==null)return;const L=seasons[+d.s][2];
+  if(d.x!=null){if(L.length<2)return alert('계절마다 사진이 한 장 이상 있어야 합니다.');L.splice(+d.x,1);drawSeasons()}
+  else if(d.l!=null){const i=+d.l;[L[i-1],L[i]]=[L[i],L[i-1]];drawSeasons()}
+  else if(d.add) pickPics(async fs=>{for(const f of fs){try{const P=await shrink(f,1600);newPics.set(P.url,{path:`img/season/${stampName()}.jpg`,b64:P.b64});L.push(P.url)}catch(e){alert(f.name+' — 사진을 읽지 못했습니다.')}}
+    drawSeasons();$('seasonMsg').textContent='[계절 사진 저장]을 눌러야 홈페이지에 올라갑니다'});
+};
+$('seasonSave').onclick=async()=>{
+  $('seasonSave').disabled=true; $('seasonMsg').textContent='저장 중…';
+  try{
+    for(const s of seasons){for(let i=0;i<s[2].length;i++){const n=newPics.get(s[2][i]);if(n){await put(n.path,n.b64,null,'계절 사진: '+n.path);newPics.delete(s[2][i]);s[2][i]=n.path}}}
+    const f=await gh('index.html?ref='+BRANCH);
+    await put('index.html',b64text(setSeasons(b64dec(f.content),seasons)),f.sha,'계절 사진 수정');
+    drawSeasons(); $('seasonMsg').textContent='저장 완료 — 1~2분 뒤 홈페이지에 반영됩니다';
+  }catch(e){$('seasonMsg').textContent='저장 실패: '+e.message+' — 다시 눌러 주세요'}
+  finally{$('seasonSave').disabled=false}
+};
+
 /* 이 기기에서 처음이면 사용법을 펼쳐 둔다 */
 try{if(!localStorage.getItem(KEY+'_guide')){$('guideBox').open=true;localStorage.setItem(KEY+'_guide','1')}}catch(e){}
 gate();
