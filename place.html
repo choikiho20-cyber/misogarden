@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'">
+<title>지도 4곳 맞추기 · 작업실</title>
+<style>
+:root{--paper:#F7F5F1;--ink:#1C1915;--ink2:#4A443C;--stone:#6B6055;--line:rgba(28,25,21,.16);--gold:#8A6A2B;--gold-h:#6F5422;--bad:#B3261E;--good:#2E7D4F}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Pretendard Variable',Pretendard,-apple-system,system-ui,sans-serif;font-size:16px;line-height:1.65;color:var(--ink);background:var(--paper);word-break:keep-all}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:rgba(247,245,241,.96);border-bottom:1px solid var(--line)}
+header b{font-weight:700}header a{font-size:13px;color:var(--stone)}
+main{max-width:860px;margin:0 auto;padding:18px 16px 120px}
+.card{border:1px solid var(--line);background:#fff;padding:18px 16px;margin-bottom:14px;border-radius:4px}
+.card h2{font-size:17px;margin:0 0 4px}
+.hint{font-size:13.5px;color:var(--stone);margin:0 0 12px}
+label{display:block;font-size:13.5px;color:var(--ink2);margin:14px 0 5px}
+label .n{color:var(--stone);margin-left:6px;font-size:12px}
+input[type=text],textarea{width:100%;padding:11px 13px;background:var(--paper);border:1px solid var(--line);border-radius:3px;min-height:44px}
+textarea{resize:vertical;line-height:1.6}
+input:focus,textarea:focus{outline:none;border-color:var(--gold);background:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:0 16px;min-height:44px;border:1px solid var(--gold);color:var(--gold);border-radius:3px;font-size:15px;font-weight:600;background:#fff}
+.btn:hover{background:var(--gold);color:#fff}.btn.solid{background:var(--gold);color:#fff}.btn.solid:hover{background:var(--gold-h)}
+.btn.ghost{border-color:var(--line);color:var(--ink2)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.warn{background:#fff7ed;border:1px solid #fed7aa;border-radius:3px;padding:8px 14px;font-size:14px;margin-top:12px}
+.warn ul{margin:4px 0 0 18px}
+.ok{color:var(--good)}.bad{color:var(--bad)}
+.plat{border:1px solid var(--line);border-radius:4px;padding:12px;margin:10px 0}
+.plat h3{font-size:15px;margin:0 0 6px}
+.f{border-top:1px solid var(--line);padding:8px 0}
+.f .k{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2)}
+.f .k button{margin-left:auto;border:1px solid var(--line);border-radius:3px;padding:3px 10px;font-size:13px;background:var(--paper)}
+.f pre{white-space:pre-wrap;font-family:inherit;margin:4px 0 0;font-size:15px}
+.f.empty .k{color:var(--bad)}
+.steps{margin:8px 0 0 18px;font-size:14px;color:var(--ink2)}
+.status{font-size:13.5px;margin-left:4px}
+.msg{font-size:14px;color:var(--ink2)}
+</style>
+</head>
+<body>
+<header><b>지도 4곳 맞추기</b><a href="/admin.html">← 블로그 관리</a></header>
+<main>
+  <section class="card" id="gate" hidden>
+    <h2>먼저 블로그 관리에 들어와 주세요</h2>
+    <p class="hint">이 화면은 「블로그 관리」와 같은 열쇠를 씁니다. <a href="/admin.html">블로그 관리</a>에서 비밀번호로 들어온 뒤 다시 여세요.</p>
+  </section>
+
+  <section class="card" id="sheetCard" hidden>
+    <h2>① 가게 정보 (정본)</h2>
+    <p class="hint">여기 적힌 것이 네이버·카카오·구글·당근 네 곳의 기준입니다. 바뀐 것이 있으면 여기서 고치고 저장하세요.</p>
+    <div class="row" style="margin-top:0"><button class="btn ghost" id="fromSite">홈페이지 정보에서 가져오기</button><span class="status" id="sheetMsg"></span></div>
+    <div id="fields"></div>
+    <div class="row"><button class="btn solid" id="save">정본 저장</button><button class="btn" id="build">② 4곳 글 만들기</button></div>
+    <div class="warn" id="warn" hidden></div>
+  </section>
+
+  <section class="card" id="outCard" hidden>
+    <h2>② 네 곳에 넣을 글</h2>
+    <p class="hint">플랫폼마다 글자 수·금지 기호 규칙에 맞춰 만든 것입니다. 「복사」로 붙여 넣거나, 아래 ③으로 자동으로 채우세요.</p>
+    <div id="out"></div>
+  </section>
+
+  <section class="card" id="extCard" hidden>
+    <h2>③ 자동으로 채우기 (크롬 확장)</h2>
+    <p class="hint" id="extState">확장 프로그램을 확인하는 중…</p>
+    <ol class="steps">
+      <li>「확장으로 보내기」를 누릅니다.</li>
+      <li>크롬 오른쪽 위 확장 아이콘(지도 4곳 맞추기) → 플랫폼 「열기」 → 로그인 → 정보 수정 화면까지 갑니다. (처음 한 번만 로그인)</li>
+      <li>확장 아이콘 → 「이 화면 채우기」 → 초록 칸을 확인하고 <b>저장은 직접</b> 누릅니다.</li>
+    </ol>
+    <div class="row"><button class="btn solid" id="send">확장으로 보내기</button><span class="status" id="sendMsg"></span></div>
+  </section>
+</main>
+
+<script>
+/* ── 사이트마다 이 줄만 바꾼다 (admin.html 과 같은 값) ── */
+const REPO='choikiho20-cyber/misogarden', BRANCH='main', KEY='miso_gh_token', FILE='place.json', AI_URL='';
+const FM={"_설명": "플랫폼 칸 지도 — place_sync.py(대행 PC)와 extension/(사장님 크롬)이 같이 읽는다. 화면이 바뀌면 여기만 고치고 build_extension.py 를 다시 돌린다.", "label": {"naver": "네이버 스마트플레이스", "kakao": "카카오맵", "google": "구글 비즈니스 프로필", "daangn": "당근 비즈프로필"}, "start_url": {"naver": "https://new.smartplace.naver.com/", "kakao": "https://business.kakao.com/profiles", "google": "https://business.google.com/locations", "daangn": "https://business.daangn.com/"}, "hosts": {"naver": ["smartplace.naver.com", "new.smartplace.naver.com"], "kakao": ["business.kakao.com"], "google": ["business.google.com", "www.google.com"], "daangn": ["business.daangn.com", "bizprofile.daangn.com"]}, "limits": {"naver_desc": 2000, "naver_route": 400, "kakao_desc": 50, "google_desc": 750}, "limits_note": "네이버 2000·400·카카오 50 = 11/15 화면 실측(maxlength), 구글 750 = 공식, 당근 소개는 상한 표시 없음", "naver_banned": "·—~★☆▶◀♥♡※●○■□◆◇→←↑↓", "fields": {"naver": {"ph:우리 업체를 고객들에게": "상세설명", "ph:역삼역": "찾아오는길", "ph:발렛파킹": "주차"}, "kakao": {"ph:한줄소개말": "소개", "ph:상세 주소를": "상세주소", "ph:전화번호를 입력": "전화번호", "ph:http(s)://": "홈페이지"}, "google": {"설명": "설명", "전화번호": "전화번호", "웹사이트": "웹사이트"}, "daangn": {}}, "manual_only": ["daangn"], "manual_only_note": "당근 약관(2026-01-09 시행)이 「자동화된 수단으로 로그인·게시」를 제재 대상으로 명시 → 11/24 대표님 결정으로 자동 진행·자동 입력 끔. 글은 우리가 만들고, 당근 화면에는 사람이 복사·붙여넣기.", "fields_note": {"naver": "11/15 실측. 이름표 글자 없음 → 안내 문구(ph:). 전화는 국번 칸 분리, 키워드는 1개씩 추가, 홈페이지는 기본·부가정보 탭에 없음. 주차는 부가정보 탭", "kakao": "11/15 실측. 매장>매장 정보 한 화면. 전화·홈페이지는 같은 문구 칸 여러 개 → 첫 칸", "google": "미실측(계정 소유권 대기) — 추정값", "daangn": "11/15 실측. 메뉴마다 화면·저장 따로. 「소개」 메뉴는 이름표 소개. 전화·홈페이지는 「기본 정보」 메뉴 추정"}, "manual": {"naver": "전화번호(국번 칸 따로·하이픈 없이), 키워드(최대 5개, 한 개씩 추가), 편의시설 체크(부가정보 탭), 홈페이지(기본·부가정보 탭엔 없음)", "kakao": "영업시간·휴무일 체크(같은 화면 아래), 가격정보·부가정보 탭", "google": "영업시간·카테고리 고르기", "daangn": "전부 손으로 (약관상 자동 금지) — 「소개글 복사」 → 당근 비즈프로필 > 소개 칸에 붙여넣기 → 저장. 영업 시간·가격도 손으로, 메뉴마다 저장 따로"}, "save_words": ["저장", "등록하기", "등록", "저장하기", "변경사항 저장", "적용"], "_path_설명": "로그인 뒤 수정 화면까지 가는 클릭 순서(place_sync.py record 로 기록). text=글자가 같은 링크/버튼을 누른다. 가게 이름 자리는 {name}", "path": {"naver": [{"text": "{name}", "optional": true}, {"text": "업체정보"}], "kakao": [{"text": "{name}", "optional": true, "loose": true}, {"text": "매장"}], "_daangn_끔": "당근은 manual_only — 길(path)을 두지 않는다"}, "_path_optional": "optional=true 인 걸음은 그 글자가 없으면 건너뛴다 (카카오: 비즈니스가 하나면 대시보드로 바로 들어가므로 가게 선택이 없음)", "edit_url_hint": {"naver": "menu=basic", "kakao": "/modification"}, "login_note": {"naver": "로그인 때 「로그인 상태 유지」 체크 + 새 기기 등록", "kakao": "QR 로그인 뒤 「로그인 상태 유지」", "daangn": "휴대폰 문자 인증 → 「신뢰할 수 있는 기기로 설정」(15일 유지, 보름마다 다시)"}};
+
+const API=`https://api.github.com/repos/${REPO}/contents/`;
+const $=id=>document.getElementById(id);
+const token=()=>{try{return localStorage.getItem(KEY)||''}catch(e){return ''}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const b64text=s=>{const u=new TextEncoder().encode(s);let b='';for(let i=0;i<u.length;i+=0x8000)b+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(b)};
+const lines=v=>v.split('\n').map(x=>x.trim()).filter(Boolean);
+async function gh(path,opts={}){
+  const r=await fetch(API+path,{cache:'no-store',...opts,headers:{Authorization:'Bearer '+token(),Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});
+  if(!r.ok){const e=new Error(r.status+' '+(await r.text()).slice(0,120));e.status=r.status;throw e}
+  return r.json();
+}
+
+/* ── 정본 모양 (place_sync.py 정보표와 같음) ── */
+const EMPTY={상호:'',대표자:'',사업자번호:'',업태종목:'',주소:'',상세주소:'',전화:'',영업시간:[],휴무:'',휴게시간:'',홈페이지:'',SNS:[],
+  카테고리:{네이버:'',카카오:'',구글_주:'',구글_보조:[]},가격표:[],편의:[],주차:'',찾아오는길:'',키워드:[],소개:'',소개_네이버:'',소개_카카오:'',소개_구글:'',소개_당근:'',확인필요:[]};
+const HINT={영업시간:'한 줄에 「요일 시간」 예) 월~금 10:00 - 22:00',가격표:'한 줄에 「이름 | 가격 | 설명」',카테고리:'한 줄에 「플랫폼: 값」, 여러 개는 쉼표',
+  SNS:'한 줄에 하나',편의:'한 줄에 하나',키워드:'한 줄에 하나 (네이버 최대 5개)',확인필요:'한 줄에 하나',
+  소개:'가게 소개 원문 — 비워 두면 플랫폼별 소개도 못 만듭니다',소개_네이버:'비우면 「소개」로 자동(2000자)',소개_카카오:'비우면 「소개」 첫 문장으로 자동(50자)',소개_구글:'비우면 「소개」로 자동(750자)',소개_당근:'비우면 「소개」로 자동'};
+let sheet=null, sha=null;
+
+/* ── 규칙 (place_sync.build_inputs 와 같은 규칙) ── */
+const EMOJI=/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu;
+function naverClean(t){t=(t||'').replace(EMOJI,'');for(const ch of FM.naver_banned)t=t.split(ch).join(' ');return t.replace(/[ \t]{2,}/g,' ').trim()}
+const cut=(t,n)=>{t=(t||'').trim();if(t.length<=n)return t;const s=t.slice(0,n);const i=Math.max(s.lastIndexOf('. '),s.lastIndexOf(' '));return (i>n*0.6?s.slice(0,i):s).trim()};
+const firstLine=(t,n)=>{t=(t||'').replace(/\s+/g,' ').trim();const m=t.match(/^(.+?[.!?])(\s|$)/);const s=m?m[1]:t;return cut(s.replace(/[.!?]$/,''),n)};
+function hoursText(p){return (p.영업시간||[]).map(h=>`${h.요일||''} ${h.시간||''}`.trim()).join('\n')}
+function buildInputs(p){
+  const warn=[...(p.확인필요||[])];
+  const base=p.소개||'';
+  const nv=naverClean(p.소개_네이버||cut(base,FM.limits.naver_desc));
+  const kk=p.소개_카카오||firstLine(base,FM.limits.kakao_desc);
+  const gg=p.소개_구글||cut(base,FM.limits.google_desc);
+  const dn=p.소개_당근||base;
+  const route=naverClean(p.찾아오는길);
+  const prices=(p.가격표||[]).filter(x=>x.이름).map(x=>`${x.이름}  ${x.가격||''}`.trim());
+  const cat=p.카테고리||{};
+  const out={
+    naver:{상호:p.상호||'',카테고리:cat.네이버||'',주소:p.주소||'',상세주소:p.상세주소||'',전화번호:p.전화||'',영업시간:hoursText(p),휴무일:p.휴무||'',
+      상세설명:nv,찾아오는길:route,홈페이지:p.홈페이지||'',키워드:(p.키워드||[]).filter(Boolean).slice(0,5).join(', '),가격표:prices.join('\n'),편의시설:(p.편의||[]).filter(Boolean).join(', '),주차:naverClean(p.주차).slice(0,400)},
+    kakao:{상호:p.상호||'',카테고리:cat.카카오||'',주소:p.주소||'',상세주소:p.상세주소||'',전화번호:p.전화||'',영업시간:hoursText(p),휴무일:p.휴무||'',소개:kk,홈페이지:p.홈페이지||''},
+    google:{'비즈니스 이름':p.상호||'','주 카테고리':cat.구글_주||'','보조 카테고리':(cat.구글_보조||[]).filter(Boolean).join(', '),주소:[p.주소,p.상세주소].filter(Boolean).join(', '),
+      전화번호:p.전화||'',웹사이트:p.홈페이지||'',영업시간:hoursText(p),설명:gg,서비스:prices.join('\n')},
+    daangn:{상호:p.상호||'',주소:p.주소||'',상세주소:p.상세주소||'',전화번호:p.전화||'',영업시간:hoursText(p),휴무일:p.휴무||'',소개:dn,홈페이지:p.홈페이지||'',가격표:prices.join('\n')}};
+  for(const [k,t] of [['naver_desc',nv],['naver_route',route],['kakao_desc',kk],['google_desc',gg]])
+    if(t.length>FM.limits[k]) warn.push(`${k}: ${t.length}자 — 상한 ${FM.limits[k]}자 넘음, 줄여야 함`);
+  for(const need of ['상호','주소','전화']) if(!p[need]) warn.push(`${need}: 비어 있음 — 4곳 모두 필수`);
+  if(!base&&!p.소개_네이버) warn.push('소개: 비어 있음 — 플랫폼 소개글을 만들 수 없음');
+  return {out,warn};
+}
+
+/* ── 화면 ── */
+function kindOf(k,v){
+  if(k==='영업시간')return 'h'; if(k==='가격표')return 'p';
+  if(v&&typeof v==='object'&&!Array.isArray(v))return 'c';
+  if(Array.isArray(v))return 'l'; return 's';
+}
+function show(k,v,kind){
+  if(kind==='h')return (v||[]).map(x=>`${x.요일||''} ${x.시간||''}`.trim()).join('\n');
+  if(kind==='p')return (v||[]).map(x=>[x.이름,x.가격,x.설명].map(s=>s||'').join(' | ').replace(/( \| )+$/,'')).join('\n');
+  if(kind==='c')return Object.entries(v||{}).map(([a,b])=>`${a}: ${Array.isArray(b)?b.join(', '):b}`).join('\n');
+  if(kind==='l')return (v||[]).join('\n'); return v||'';
+}
+function parse(k,txt,kind,orig){
+  if(kind==='s')return txt;
+  if(kind==='l')return lines(txt);
+  if(kind==='h')return lines(txt).map(x=>{const i=x.indexOf(' ');return i<0?{요일:x,시간:''}:{요일:x.slice(0,i),시간:x.slice(i+1).trim()}});
+  if(kind==='p')return lines(txt).map(x=>{const [이름='',가격='',...r]=x.split('|').map(s=>s.trim());return {이름,가격,설명:r.join(' | ')}});
+  const o={};for(const x of lines(txt)){const i=x.indexOf(':');if(i<0)continue;const a=x.slice(0,i).trim(),b=x.slice(i+1).trim();o[a]=Array.isArray((orig||{})[a])?b.split(',').map(s=>s.trim()).filter(Boolean):b}return o;
+}
+function renderSheet(){
+  $('fields').innerHTML=Object.entries(sheet).map(([k,v])=>{const kind=kindOf(k,v),val=show(k,v,kind);
+    const rows=Math.min(12,Math.max(1,Math.ceil(val.length/70)+(val.match(/\n/g)||[]).length));
+    return `<label>${esc(k)}<span class="n">${esc(HINT[k]||(kind==='s'?val.length+'자':''))}</span></label><textarea data-k="${esc(k)}" data-kind="${kind}" rows="${rows}">${esc(val)}</textarea>`}).join('');
+}
+function readSheet(){
+  const s={};for(const t of document.querySelectorAll('#fields textarea')){const k=t.dataset.k;s[k]=parse(k,t.value,t.dataset.kind,sheet[k])}return s;
+}
+function showWarn(w){$('warn').hidden=false;$('warn').innerHTML='<b>확인 필요</b><ul>'+(w.length?w.map(x=>'<li>'+esc(x)+'</li>').join(''):'<li>없음</li>')+'</ul>'}
+
+let inputs=null;
+function renderOut(){
+  const {out,warn}=buildInputs(sheet); inputs=out; showWarn(warn);
+  $('outCard').hidden=false; $('extCard').hidden=false;
+  $('out').innerHTML=Object.entries(out).map(([p,f])=>`<div class="plat"><h3>${esc(FM.label[p])}</h3>${Object.entries(f).map(([k,v])=>
+    `<div class="f${v?'':' empty'}"><div class="k">${esc(k)}<span class="n">${String(v).length}자</span><button data-cp="1">복사</button></div><pre>${esc(v)}</pre></div>`).join('')}</div>`).join('');
+  document.querySelectorAll('[data-cp]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(b.closest('.f').querySelector('pre').innerText);b.textContent='복사됨';setTimeout(()=>b.textContent='복사',1200)});
+}
+
+/* ── 홈페이지 config 에서 첫 값 가져오기 (있는 칸만, 지어내지 않음) ── */
+async function fromSite(){
+  let c;try{c=await (await fetch('/config.json',{cache:'no-store'})).json()}catch(e){return $('sheetMsg').textContent='이 홈페이지에는 config.json 이 없습니다'}
+  const pick=(...ks)=>{for(const k of ks){const v=k.split('.').reduce((o,x)=>o&&o[x],c);if(typeof v==='string'&&v.trim())return v.trim()}return ''};
+  const s=readSheet();
+  s.상호=s.상호||pick('business.name','site.name','name','brand','title');
+  s.전화=s.전화||pick('business.phone','contact.phone','phone','tel');
+  s.주소=s.주소||pick('business.address','contact.address','address','addr');
+  s.홈페이지=s.홈페이지||pick('site.url','url','site_url','domain');
+  s.소개=s.소개||pick('business.intro','intro','description','og_description','tagline');
+  if(!s.SNS.length&&Array.isArray(c.same_as))s.SNS=c.same_as.filter(x=>typeof x==='string');
+  sheet=s;renderSheet();$('sheetMsg').textContent='홈페이지 정보를 빈 칸에만 넣었습니다 — 확인 후 저장하세요';
+}
+
+/* ── 저장·불러오기 ── */
+async function load(){
+  if(!token()){$('gate').hidden=false;return}
+  $('sheetCard').hidden=false;
+  try{const r=await gh(FILE+'?ref='+BRANCH);sha=r.sha;sheet={...EMPTY,...JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(r.content.replace(/\n/g,'')),c=>c.charCodeAt(0))))}}
+  catch(e){sheet={...EMPTY};$('sheetMsg').textContent='아직 정본이 없습니다 — 「홈페이지 정보에서 가져오기」로 시작하세요'}
+  renderSheet();
+}
+$('save').onclick=async()=>{
+  sheet=readSheet();$('sheetMsg').textContent='저장 중…';
+  try{const r=await gh(FILE,{method:'PUT',body:JSON.stringify({message:'지도 4곳 정본 저장',content:b64text(JSON.stringify(sheet,null,2)),branch:BRANCH,...(sha?{sha}:{})})});sha=r.content.sha;$('sheetMsg').textContent='저장됐습니다';renderOut()}
+  catch(e){$('sheetMsg').textContent='저장 실패: '+e.message}
+};
+$('build').onclick=()=>{sheet=readSheet();renderOut()};
+$('fromSite').onclick=fromSite;
+
+/* ── 확장으로 보내기 ── */
+function extOn(){return document.documentElement.getAttribute('data-place-sync')==='1'}
+function extCheck(){const on=extOn();$('extState').innerHTML=on?'<span class="ok">확장 프로그램이 켜져 있습니다.</span>':'<span class="bad">확장 프로그램이 안 보입니다.</span> 소통마케팅센터에서 받은 「지도 4곳 맞추기」 확장을 설치한 뒤 이 페이지를 새로고침하세요.';return on}
+$('send').onclick=()=>{
+  if(!inputs){sheet=readSheet();renderOut()}
+  if(!extCheck())return;
+  $('sendMsg').textContent='보내는 중…';
+  window.postMessage({type:'place-sync-inputs',name:sheet.상호||'',inputs},'*');
+};
+window.addEventListener('message',ev=>{if(ev.source===window&&ev.data&&ev.data.type==='place-sync-stored')$('sendMsg').innerHTML=ev.data.ok?'<span class="ok">확장에 들어갔습니다. 이제 확장 아이콘에서 플랫폼을 여세요.</span>':'<span class="bad">보내기 실패</span>'});
+// 확장의 다리는 페이지가 다 뜬 뒤에 붙으므로 몇 초 동안 다시 본다
+(function poll(n){extCheck();if(!extOn()&&n>0)setTimeout(()=>poll(n-1),400)})(10);
+load();
+</script>
+</body>
+</html>
